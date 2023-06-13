@@ -4,6 +4,7 @@ import afpa.mra.configuration_token.ConfigurationToken;
 import afpa.mra.entity.Message;
 import afpa.mra.entity.MessageId;
 import afpa.mra.repository.MessageRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,9 @@ public class MessageController {
     @Autowired
     public ConfigurationToken configurationToken;
 
+    @Autowired
+    private HttpServletRequest request;
+
     @GetMapping("/{idEmetteur}/{idRecepteur}/{idMessage}")
     public ResponseEntity<Message> getMessageById(
             @PathVariable("idEmetteur") int idEmetteur,
@@ -33,7 +37,8 @@ public class MessageController {
             @RequestBody Message message,
             @RequestHeader(value = "authorization", required = false) String authorization) {
         Message createdMessage = messageRepository.save(message);
-        return configurationToken.verifier(authorization, createdMessage);
+        String adresseAppelante = request.getHeader("Referer");
+        return configurationToken.verifier(authorization, adresseAppelante, createdMessage);
     }
 
     @PutMapping("/{idEmetteur}/{idRecepteur}/{idMessage}")

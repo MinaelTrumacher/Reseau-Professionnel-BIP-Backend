@@ -12,9 +12,9 @@ public class ConfigurationToken {
 
     private static final String URL_CVT = "http://localhost:8081/cvt/v1/verifier";
 
-    public ResponseEntity verifier(String token, Object contenu) {
-        if ("http://localhost:4200".equals(token)) {
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity verifier(String token, String url, Object contenu) {
+        if (url.startsWith("http://localhost:420")) {
+            return new ResponseEntity(contenu, HttpStatus.OK);
         } else {
             try {
                 RestTemplate restTemplate = new RestTemplate();
@@ -31,7 +31,7 @@ public class ConfigurationToken {
         }
     }
 
-    public ResponseEntity verifier(String token) {
+    public ResponseEntity verifier(String token, String url) {
         if ("http://localhost:4200".equals(token)) {
             return new ResponseEntity(HttpStatus.OK);
         } else {
