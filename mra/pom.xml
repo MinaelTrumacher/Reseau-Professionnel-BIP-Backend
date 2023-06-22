@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>afpa</groupId>
 	<artifactId>mra</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>mra</name>
 	<description>Mise en Relation des Anciens</description>
 	<properties>

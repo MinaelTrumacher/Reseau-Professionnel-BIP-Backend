@@ -3,6 +3,7 @@ package afpa.mra.controller;
 import afpa.mra.configuration_token.ConfigurationToken;
 import afpa.mra.entity.Message;
 import afpa.mra.repository.MessageRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,9 @@ public class Controller {
     @Autowired
     public ConfigurationToken configurationToken;
 
+    @Autowired
+    private HttpServletRequest request;
+
     @GetMapping("/conversation/{id}")
     public ResponseEntity<List<List<Message>>> getConversation(
             @PathVariable("id") Integer idUtilisateur,
@@ -34,8 +38,8 @@ public class Controller {
                 .collect(Collectors.toSet());
         distinctIds.remove(idUtilisateur);
         distinctIds.forEach(id -> conversation.add(messageRepository.findByUtilisateurAndInterlocauteur(idUtilisateur, id)));
-
-        return configurationToken.verifier(authorization, conversation);
+        String adresseAppelante = request.getHeader("Referer");
+        return configurationToken.verifier(authorization, adresseAppelante, conversation);
     }
 
 }

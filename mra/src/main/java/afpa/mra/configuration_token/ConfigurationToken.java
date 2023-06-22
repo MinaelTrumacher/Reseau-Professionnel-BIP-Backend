@@ -13,6 +13,8 @@ public class ConfigurationToken {
     private static final String URL_CVT = "http://localhost:8081/cvt/v1/verifier";
 
     public ResponseEntity verifier(String token, String url, Object contenu) {
+        if (url == null)
+            url = "";
         if (url.startsWith("http://localhost:420")) {
             return new ResponseEntity(contenu, HttpStatus.OK);
         } else {
