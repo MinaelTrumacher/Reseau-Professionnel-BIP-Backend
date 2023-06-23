@@ -1,4 +1,4 @@
-package afpa.mra_service;
+package afpa.mra;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

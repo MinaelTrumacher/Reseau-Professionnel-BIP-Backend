@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>afpa</groupId>
-	<artifactId>mra_service</artifactId>
+	<artifactId>mra</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>mra_service</name>
+	<name>mra</name>
 	<description>L&apos;API Rest projet Mise en Relation des Anciens</description>
 	<properties>
 		<java.version>17</java.version>

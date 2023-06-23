@@ -1,4 +1,4 @@
-package afpa.mra_service;
+package afpa.mra;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
