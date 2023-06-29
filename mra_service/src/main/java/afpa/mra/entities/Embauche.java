@@ -13,11 +13,11 @@ public class Embauche {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     @ManyToOne
     private Utilisateur utilisateur;
     
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     @ManyToOne
     private Entreprise entreprise;
 
