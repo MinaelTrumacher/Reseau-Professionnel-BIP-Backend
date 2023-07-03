@@ -13,7 +13,7 @@ public class Entreprise {
     private Long id;
     
     @Column(nullable = false)
-    private Long raisonSociale;
+    private String raisonSociale;
     
     @Column(nullable = false)
     private Long siret;
