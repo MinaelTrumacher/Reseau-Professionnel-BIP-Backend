@@ -1,0 +1,42 @@
+package afpa.mra.controller;
+
+import afpa.mra.entities.Entreprise;
+import afpa.mra.repository.EntrepriseRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/entreprises")
+public class EntrepriseController {
+
+    @Autowired
+    private EntrepriseRepository entrepriseRepository;
+
+    @PostMapping
+    public void addEntreprise(@RequestBody Entreprise entreprise) {
+        entrepriseRepository.save(entreprise);
+    }
+
+    @GetMapping
+    public List<Entreprise> entreprepriseList() {
+        return entrepriseRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Entreprise getEntreprise(@PathVariable("id") Long id) {
+        return entrepriseRepository.getById(id);
+    }
+
+    @PutMapping
+    public void updateEntreprise(@RequestBody Entreprise entreprise) {
+        entrepriseRepository.save(entreprise);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteEntreprise(@PathVariable("id") Long id) {
+        entrepriseRepository.deleteById(id);
+    }
+}

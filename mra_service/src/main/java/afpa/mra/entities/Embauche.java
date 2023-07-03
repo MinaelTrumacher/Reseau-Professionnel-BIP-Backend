@@ -27,4 +27,7 @@ public class Embauche {
     @Column
     private Date dateFin;
 
+
+
+
 }
