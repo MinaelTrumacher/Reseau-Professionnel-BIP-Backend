@@ -1,7 +1,7 @@
-package afpa.mra.controller;
+package afpa.mra.controllers;
 
 import afpa.mra.entities.Embauche;
-import afpa.mra.repository.EmbaucheRepository;
+import afpa.mra.repositories.EmbaucheRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
