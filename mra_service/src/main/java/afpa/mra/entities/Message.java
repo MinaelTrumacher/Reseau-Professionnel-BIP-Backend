@@ -3,6 +3,8 @@ package afpa.mra.entities;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "message")
 public class Message {
@@ -27,5 +29,5 @@ public class Message {
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private String dateEnvoi;
+    private Date dateEnvoi;
 }

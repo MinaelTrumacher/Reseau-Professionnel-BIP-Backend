@@ -1,11 +1,17 @@
 package afpa.mra.entities;
 
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "entreprises")
 @Data
+@Getter
+@Setter
+@Transactional
 public class Entreprise {
 	
     @Id
@@ -16,5 +22,5 @@ public class Entreprise {
     private String raisonSociale;
     
     @Column(nullable = false)
-    private Long siret;
+    private String siret;
 }

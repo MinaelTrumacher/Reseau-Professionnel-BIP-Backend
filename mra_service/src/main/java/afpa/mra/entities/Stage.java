@@ -1,12 +1,16 @@
 package afpa.mra.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "stage")
+@Getter
+@Setter
 public class Stage {
 	
     @Id
@@ -15,6 +19,7 @@ public class Stage {
     private Long id;
     
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Type type;
     
     @Column(nullable = false)
