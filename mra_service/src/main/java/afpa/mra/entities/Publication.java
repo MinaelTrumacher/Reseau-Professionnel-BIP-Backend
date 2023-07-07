@@ -18,7 +18,7 @@ public class Publication {
     private Long id;
     
     @Column(nullable = false)
-    private String title;
+    private String titre;
     
     @Column(nullable = false)
     private String categorie;

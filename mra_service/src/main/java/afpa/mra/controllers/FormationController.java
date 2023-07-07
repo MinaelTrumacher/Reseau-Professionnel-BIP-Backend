@@ -2,6 +2,7 @@ package afpa.mra.controllers;
 
 
 import afpa.mra.entities.Formation;
+import afpa.mra.entities.Stage;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityNotFoundException;
@@ -101,6 +102,19 @@ public class FormationController {
                 transaction.begin();
                 Formation formation = entityManager.find(Formation.class, id);
                 if (formation != null) {
+                    // Vérifier s'il existe des stages associés à la formation
+                    List<Stage> stages = entityManager.createQuery("SELECT s FROM Stage s WHERE s.formation.id = :formationId", Stage.class)
+                            .setParameter("formationId", id)
+                            .getResultList();
+
+                    if (!stages.isEmpty()) {
+                        // Dissocier les stages de la formation
+                        for (Stage stage : stages) {
+                            stage.setFormation(null);
+                            entityManager.merge(stage);
+                        }
+                    }
+
                     entityManager.remove(formation);
                     transaction.commit();
                     return ResponseEntity.ok("Formation supprimée avec succès.");

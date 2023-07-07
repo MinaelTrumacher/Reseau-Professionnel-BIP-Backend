@@ -10,6 +10,7 @@ import afpa.mra.repositories.StageRepository;
 import afpa.mra.repositories.UtilisateurRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.EntityTransaction;
 import org.springframework.http.HttpStatus;
@@ -123,6 +124,10 @@ public class StageController {
                 transaction.begin();
                 Stage stage = entityManager.find(Stage.class, id);
                 if (stage != null) {
+                    // Dissocier l'utilisateur et la formation du stage
+                    stage.setUtilisateur(null);
+                    stage.setFormation(null);
+
                     entityManager.remove(stage);
                     transaction.commit();
                     return ResponseEntity.ok("Stage supprimé avec succès");

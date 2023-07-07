@@ -1,12 +1,16 @@
 package afpa.mra.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "message")
+@Getter
+@Setter
 public class Message {
 	
     @Id
