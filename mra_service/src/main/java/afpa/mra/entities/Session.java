@@ -1,11 +1,14 @@
 package afpa.mra.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "session")
 public class Session {
