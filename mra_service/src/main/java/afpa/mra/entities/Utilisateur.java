@@ -2,7 +2,9 @@ package afpa.mra.entities;
 
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -13,6 +15,8 @@ import java.util.Date;
 @Table(name = "utilisateurs")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Transactional
 public class Utilisateur {
 	
@@ -28,6 +32,7 @@ public class Utilisateur {
     private String prenom;
     
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
     
     @Column(nullable = false)
@@ -41,8 +46,13 @@ public class Utilisateur {
     
     @Column(nullable = false)
     private String etatInscription;
+
+    @ManyToOne
+    @JoinColumn(name = "entreprise_id", nullable = true)
+    private Entreprise entreprise;
     
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "geolocalisation_id", nullable = true)
     private Geolocalisation geolocalisation;
 
     @Temporal(TemporalType.TIMESTAMP)

@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-MraServiceApplication<mra>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "afpa.mra.MraServiceApplication",
+            "projectName": "mra",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

@@ -22,5 +22,5 @@ public class Entreprise {
     private String raisonSociale;
     
     @Column(nullable = false)
-    private String siret;
+    private Long siren;
 }
