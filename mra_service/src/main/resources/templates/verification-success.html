@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verification Success</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .verification-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #428bca;
+        }
+
+        p {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="verification-container">
+        <h1>Verification Success</h1>
+        <p th:text="${message}"></p>
+    </div>
+</body>
+</html>

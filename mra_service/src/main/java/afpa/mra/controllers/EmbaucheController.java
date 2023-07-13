@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -26,8 +27,8 @@ public class EmbaucheController {
     }
 
     @GetMapping("/{id}")
-    public Embauche getEmbauche(@PathVariable("id") Long id) {
-        return embaucheRepository.getById(id);
+    public Optional<Embauche> getEmbauche(@PathVariable("id") Long id) {
+        return embaucheRepository.findById(id);
     }
 
     @PutMapping

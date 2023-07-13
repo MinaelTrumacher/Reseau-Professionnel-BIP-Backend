@@ -12,15 +12,19 @@ public class Geolocalisation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false)
-    private String ville;
-    
-    @Column(nullable = false)
-    private String region;
-    
-    @Column(nullable = false)
     private String latitude;
     
-    @Column(nullable = false)
+
     private String longitude;
+
+
+    private String codePostal;
+
+ 
+    private String region;
+
+
+    private String ville;
+
+
 }
