@@ -1,17 +1,13 @@
 package afpa.mra.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.transaction.Transactional;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
+@Data
 @Entity
 @Table(name = "entreprises")
-@Data
-@Getter
-@Setter
-@Transactional
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Entreprise {
 	
     @Id
@@ -22,5 +18,5 @@ public class Entreprise {
     private String raisonSociale;
     
     @Column(nullable = false)
-    private Long siren;
+    private Long siret;
 }

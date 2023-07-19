@@ -1,36 +1,38 @@
 package afpa.mra.controllers;
 
+import afpa.mra.entities.Formation;
+import afpa.mra.entities.Session;
+import afpa.mra.repositories.FormationRepository;
+import afpa.mra.repositories.SessionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import afpa.mra.entities.Session;
-import afpa.mra.entities.Formation;
-import afpa.mra.repositories.SessionRepository;
-import afpa.mra.repositories.FormationRepository;
-
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/session")
+@CrossOrigin(origins = "*")
+@RequestMapping("/sessions")
 public class SessionController {
 	
 	@Autowired
 	private SessionRepository sessionRepository ;
 	@Autowired
 	private FormationRepository formationRepository;
-		
+
+	@PostMapping
+	public Session createSession(@RequestBody Session session) {
+
+		Formation formation = formationRepository.findById(session.getFormation().getId()).get();
+		session.setFormation(formation);
+
+		return sessionRepository.save(session);
+	}
+
 	@GetMapping("/{id}")
-	public Optional<Session> getOneSession(@PathVariable Long id) {
+	public Optional<Session> getSession(@PathVariable Long id) {
 		return sessionRepository.findById(id);
 	}
 	
@@ -38,22 +40,22 @@ public class SessionController {
     public List<Session> getAllSession() {
         return sessionRepository.findAll();
     }
-    
-	@PostMapping
-	public Session addSession(@RequestBody Session session) {
-		
-		Formation formation = formationRepository.findById(session.getFormation().getId()).get();
-		session.setFormation(formation);
-		
-		return sessionRepository.save(session);
+	
+	@PutMapping(path = "/{id}")
+	public ResponseEntity<Object> updateSession(@RequestBody Session session) {
+		Optional<Formation> optionalFormation = formationRepository.findById(session.getFormation().getId());
+		 Session session1;
+		 if (optionalFormation.isEmpty()) {
+			 Formation formation = formationRepository.save(session.getFormation());
+			 session.setFormation(formation);
+		 } else {
+			 session.setFormation(optionalFormation.get());
+		 }
+		 session1 = sessionRepository.save(session);
+		return new ResponseEntity<>(session1, HttpStatus.OK);
 	}
 	
-	@PutMapping
-	public Session updateSession(@RequestBody Session session) {
-		return sessionRepository.save(session);
-	}
-	
-    @DeleteMapping("/{id}")
+    @DeleteMapping(path = "/{id}")
     public String deleteSession(@PathVariable Long id) {
          sessionRepository.deleteById(id);
          return "Session Supprimée";

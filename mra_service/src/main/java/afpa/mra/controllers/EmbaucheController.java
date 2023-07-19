@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/embauche")
+@CrossOrigin(origins = "*")
+@RequestMapping("/embauches")
 public class EmbaucheController {
 
     @Autowired
@@ -27,9 +27,7 @@ public class EmbaucheController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Embauche> getEmbauche(@PathVariable("id") Long id) {
-        return embaucheRepository.findById(id);
-    }
+    public Optional<Embauche> getEmbauche(@PathVariable("id") Long id) { return embaucheRepository.findById(id); }
 
     @PutMapping
     public void updateEmbauche(@RequestBody Embauche embauche) {
@@ -41,4 +39,3 @@ public class EmbaucheController {
         embaucheRepository.deleteById(id);
     }
 }
-

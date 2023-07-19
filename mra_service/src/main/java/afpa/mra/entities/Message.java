@@ -1,16 +1,16 @@
 package afpa.mra.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
+@Data
 @Entity
-@Table(name = "message")
-@Getter
-@Setter
+@Table(name = "messages")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Message {
 	
     @Id

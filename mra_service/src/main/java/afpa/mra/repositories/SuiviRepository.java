@@ -1,12 +1,10 @@
 package afpa.mra.repositories;
 
-import afpa.mra.entities.Session;
+import afpa.mra.entities.Suivi;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public interface SessionRepository extends JpaRepository<Session,Long> {
+public interface SuiviRepository extends JpaRepository<Suivi, Long> {
 
 }
-

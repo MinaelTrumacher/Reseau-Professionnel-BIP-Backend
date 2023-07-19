@@ -1,16 +1,16 @@
 package afpa.mra.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.Data;
 
 import java.util.Date;
 
+@Data
 @Entity
-@Table(name = "stage")
-@Getter
-@Setter
+@Table(name = "stages")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Stage {
 	
     @Id
@@ -28,7 +28,9 @@ public class Stage {
     @Column(nullable = false)
     private Date dateFin;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
+    @JsonBackReference
+    @JoinColumn(nullable=false, name = "utilisateur_id")
     private Utilisateur utilisateur;
     
     @ManyToOne(cascade = CascadeType.ALL)
@@ -37,3 +39,4 @@ public class Stage {
     @ManyToOne(cascade = CascadeType.ALL)
     private Entreprise entreprise;
 }
+

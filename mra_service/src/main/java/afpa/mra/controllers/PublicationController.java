@@ -1,48 +1,56 @@
 package afpa.mra.controllers;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import afpa.mra.entities.Publication;
-import afpa.mra.repositories.PublicationRepository;
+import afpa.mra.services.PublicationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/publication")
+@CrossOrigin(origins = "*")
+@RequestMapping("/publications")
 public class PublicationController {
-	
-	@Autowired
-	private PublicationRepository publicationRepository ;
-	
+    @Autowired
+    private PublicationService publicationService;
+
+    @Autowired
+    public void PublicationController(PublicationService publicationService) {
+        this.publicationService = publicationService;
+    }
+
+    @PostMapping
+    public Publication createPublication(@RequestBody Publication publication) {
+        return publicationService.createPublication(publication);
+    }
+
+    @GetMapping("/{id}")
+    public Publication getPublication(@PathVariable Long id) {
+
+        return publicationService.getPublication(id);
+    }
+
     @GetMapping
     public List<Publication> getAllPublication() {
-        return publicationRepository.findAll();
-    }
-    
-	@PostMapping
-	public Publication AddPublication(@RequestBody Publication publication) {
-		return publicationRepository.save(publication);
-	}
-	
-	@PutMapping
-	public Publication UpdatePublication(@RequestBody Publication publication) {
-		return publicationRepository.save(publication);
-	}
-	
-    @DeleteMapping("/{id}")
-    public void deletePublication(@PathVariable Long id) {
-        publicationRepository.deleteById(id);
+        return publicationService.getAllPublication();
     }
 
+    @PutMapping("/{id}")
+    public Publication updatePublication(@PathVariable Long id, @RequestBody Publication publication) {
+        return publicationService.updatePublication(publication);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePublication(@PathVariable Long id) {
+        publicationService.deletePublication(id);
+    }
+
+
+    @GetMapping("/utilisateur/{userId}")
+    public List<Publication> getPublicationsByUser(@PathVariable Long userId) {
+        return publicationService.getPublicationsByUser(userId);
+    }
+    //getFavorisByUser
+//    getPostulerByUser
 }

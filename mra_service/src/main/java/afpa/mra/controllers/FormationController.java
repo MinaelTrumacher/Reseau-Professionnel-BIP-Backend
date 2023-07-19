@@ -1,140 +1,64 @@
 package afpa.mra.controllers;
 
-
 import afpa.mra.entities.Formation;
-import afpa.mra.entities.Stage;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.EntityTransaction;
+import afpa.mra.repositories.FormationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/formations")
+@CrossOrigin(origins = "*")
+@RequestMapping("/formations")
 public class FormationController {
-    private final EntityManagerFactory entityManagerFactory;
+    @Autowired
+    private final FormationRepository formationRepository;
 
-    public FormationController(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
+    @Autowired
+    public FormationController(FormationRepository formationRepository) {
+        this.formationRepository = formationRepository;
     }
 
     @PostMapping
-    public ResponseEntity<String> createFormation(@RequestBody Formation formation) {
-        if (formation.getTitre() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Le titre de la formation n'a pas été renseigné.");
-        }
-
-        try(EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            EntityTransaction transaction = entityManager.getTransaction();
-            try {
-                transaction.begin();
-                entityManager.persist(formation);
-                transaction.commit();
-                return ResponseEntity.status(HttpStatus.CREATED).body("Le stage a été crée avec succès.");
-            } catch (Exception e) {
-                if(transaction != null && transaction.isActive()) {
-                    transaction.rollback();
-                }
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur s'est produite lors de la création de la formation.");
-            }
-        }
+    public ResponseEntity<Object> createFormation(@RequestBody Formation formation) {
+        Formation newFormation;
+        newFormation = formationRepository.save(formation);
+        return new ResponseEntity<>(newFormation, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<Formation>> getAllFormations() {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            List<Formation> formations = entityManager.createQuery("SELECT f from Formation f", Formation.class)
-                    .getResultList();
-            return ResponseEntity.ok(formations);
-        }
+    public List<Formation> getAllFormation() {
+         List<Formation> formationList = formationRepository.findAll();
+        return formationList;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Formation> getFormationById(@PathVariable Long id) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            Formation formation = entityManager.find(Formation.class, id);
-            if(formation != null) {
-                return ResponseEntity.ok(formation);
+    @GetMapping(path = "/{id}")
+    public ResponseEntity getFormationById(@PathVariable Long id) {
+        Optional<Formation> optionalFormation = formationRepository.findById(id);
+
+            if(optionalFormation.isEmpty()) {
+                Map<String, Object> body = new HashMap<>();
+                body.put("response", "Aucune formation trouvée !");
+                return new ResponseEntity<>(body,HttpStatus.NOT_FOUND);
             }
-            else {
-                return ResponseEntity.notFound().build();
-            }
-        }
+                return new ResponseEntity<>(optionalFormation.get(), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateFormation(@PathVariable Long id, @RequestBody Formation updatedFormation) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            EntityTransaction transaction = entityManager.getTransaction();
-            try {
-                transaction.begin();
-                Formation formation = entityManager.find(Formation.class, id);
-                if (formation != null) {
-                    formation.setTitre(updatedFormation.getTitre());
-                    entityManager.merge(formation);
-                    transaction.commit();
-                    return ResponseEntity.ok("La formation à été mise à jour avec succès.");
-                }
-                else {
-                    return ResponseEntity.notFound().build();
-                }
-            }
-            catch (Exception e) {
-                if (transaction != null && transaction.isActive()) {
-                    transaction.rollback();
-                }
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur s'est produite lors de la mise à jour de la formation.");
-            }
-        }
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<String> updateFormation(@RequestBody Formation formation) {
+        Formation formation1 = formationRepository.save(formation);
+        return ResponseEntity.ok("La formation à été mise à jour avec succès.");
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteFormation(@PathVariable Long id) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            EntityTransaction transaction = entityManager.getTransaction();
-            try {
-                transaction.begin();
-                Formation formation = entityManager.find(Formation.class, id);
-                if (formation != null) {
-                    // Vérifier s'il existe des stages associés à la formation
-                    List<Stage> stages = entityManager.createQuery("SELECT s FROM Stage s WHERE s.formation.id = :formationId", Stage.class)
-                            .setParameter("formationId", id)
-                            .getResultList();
 
-                    if (!stages.isEmpty()) {
-                        // Dissocier les stages de la formation
-                        for (Stage stage : stages) {
-                            stage.setFormation(null);
-                            entityManager.merge(stage);
-                        }
-                    }
-
-                    entityManager.remove(formation);
-                    transaction.commit();
-                    return ResponseEntity.ok("Formation supprimée avec succès.");
-                } else {
-                    return ResponseEntity.notFound().build();
-                }
-            } catch (EntityNotFoundException e) {
-                if (transaction != null && transaction.isActive()) {
-                    transaction.rollback();
-                }
-                e.printStackTrace();
-                return ResponseEntity.notFound().build();
-            } catch (Exception e) {
-                if (transaction != null && transaction.isActive()) {
-                    transaction.rollback();
-                }
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Une erreur s'est produite lors de la suppression de la formation.");
-            }
-        }
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Object> deleteFormation(@PathVariable Long id) {
+       formationRepository.deleteById(id);
+       return new ResponseEntity<>(HttpStatus.OK);
     }
 }

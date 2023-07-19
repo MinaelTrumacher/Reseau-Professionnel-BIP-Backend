@@ -1,9 +1,6 @@
 package afpa.mra.controllers;
 
-import afpa.mra.entities.Entreprise;
-import afpa.mra.entities.Formation;
-import afpa.mra.entities.Stage;
-import afpa.mra.entities.Utilisateur;
+import afpa.mra.entities.*;
 import afpa.mra.repositories.EntrepriseRepository;
 import afpa.mra.repositories.FormationRepository;
 import afpa.mra.repositories.StageRepository;
@@ -13,6 +10,7 @@ import jakarta.persistence.EntityManagerFactory;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.EntityTransaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,14 +18,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/stages")
+@CrossOrigin(origins = "*")
+@RequestMapping("/stages")
 public class StageController {
+    @Autowired
     private final EntityManagerFactory entityManagerFactory;
+    @Autowired
     private final UtilisateurRepository utilisateurRepository;
+    @Autowired
     private final EntrepriseRepository entrepriseRepository;
+    @Autowired
     private final FormationRepository formationRepository;
+    @Autowired
     private final StageRepository stageRepository;
 
+    @Autowired
     public StageController(EntityManagerFactory entityManagerFactory,
                            UtilisateurRepository utilisateurRepository,
                            EntrepriseRepository entrepriseRepository,
@@ -68,13 +73,18 @@ public class StageController {
         }
     }
 
-    @GetMapping
+   /* @GetMapping
     public ResponseEntity<List<Stage>> getAllStages() {
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
             List<Stage> stages = entityManager.createQuery("SELECT s FROM Stage s", Stage.class)
                     .getResultList();
             return ResponseEntity.ok(stages);
         }
+    }*/
+    @GetMapping
+    public List<Stage> getAllStage() {
+        List<Stage> stageList = stageRepository.findAll();
+        return stageList;
     }
 
     @GetMapping("/{id}")

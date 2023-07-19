@@ -2,8 +2,11 @@ package afpa.mra.controllers;
 
 import afpa.mra.entities.Geolocalisation;
 import afpa.mra.entities.Utilisateur;
+import afpa.mra.repositories.EmbaucheRepository;
 import afpa.mra.repositories.GeolocalisationRepository;
+import afpa.mra.repositories.StageRepository;
 import afpa.mra.repositories.UtilisateurRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +20,38 @@ import java.util.Optional;
 @RequestMapping(path = "/utilisateurs")
 public class UtilisateurController {
 
+    @Autowired
     private final UtilisateurRepository utilisateurRepository;
+    @Autowired
     private final GeolocalisationRepository geolocalisationRepository;
+    @Autowired
+    private final EmbaucheRepository embaucheRepository;
+    @Autowired
+    private final StageRepository stageRepository;
 
-    public UtilisateurController(UtilisateurRepository utilisateurRepository, GeolocalisationRepository geolocalisationRepository) {
+    @Autowired
+    public UtilisateurController(UtilisateurRepository utilisateurRepository, GeolocalisationRepository geolocalisationRepository, EmbaucheRepository embaucheRepository, StageRepository stageRepository) {
         this.utilisateurRepository = utilisateurRepository;
         this.geolocalisationRepository = geolocalisationRepository;
+        this.embaucheRepository = embaucheRepository;
+        this.stageRepository = stageRepository;
+    }
+
+    @PostMapping
+    public ResponseEntity<Object> CreateUtilisateur(@RequestBody Utilisateur utilisateur) {
+//        Optional<Geolocalisation> optionalGeolocalisation = geolocalisationRepository.findByLatitudeAndLongitude(utilisateur.getGeolocalisation().getLatitude(), utilisateur.getGeolocalisation().getLongitude());
+        Optional<Geolocalisation> optionalGeolocalisation = geolocalisationRepository.findById(utilisateur.getGeolocalisation().getId());
+
+        Utilisateur utilisateur1;
+
+        if (optionalGeolocalisation.isEmpty()) {
+            Geolocalisation geolocalisation = geolocalisationRepository.save(utilisateur.getGeolocalisation());
+            utilisateur.setGeolocalisation(geolocalisation);
+        } else {
+            utilisateur.setGeolocalisation(optionalGeolocalisation.get());
+        }
+        utilisateur1 = utilisateurRepository.save(utilisateur);
+        return new ResponseEntity<>(utilisateur1, HttpStatus.OK);
     }
 
     @GetMapping(path = "{id}")
@@ -37,25 +66,10 @@ public class UtilisateurController {
         return new ResponseEntity<>(optionalUtilisateur.get(), HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<Object> CreateUtilisateur(@RequestBody Utilisateur utilisateur) {
-        Optional<Geolocalisation> optionalGeolocalisation = geolocalisationRepository.findByLatitudeAndLongitude(utilisateur.getGeolocalisation().getLatitude(), utilisateur.getGeolocalisation().getLongitude());
-
-        Utilisateur utilisateur1;
-
-        if (optionalGeolocalisation.isEmpty()) {
-            Geolocalisation geolocalisation = geolocalisationRepository.save(utilisateur.getGeolocalisation());
-            utilisateur.setGeolocalisation(geolocalisation);
-        } else {
-            utilisateur.setGeolocalisation(optionalGeolocalisation.get());
-        }
-        utilisateur1 = utilisateurRepository.save(utilisateur);
-        return new ResponseEntity<>(utilisateur1, HttpStatus.OK);
-    }
-
-    @PutMapping
+    @PutMapping(path = "{id}")
     public ResponseEntity<Object> updateUtilisateur(@RequestBody Utilisateur utilisateur) {
-        Optional<Geolocalisation> optionalGeolocalisation = geolocalisationRepository.findByLatitudeAndLongitude(utilisateur.getGeolocalisation().getLatitude(), utilisateur.getGeolocalisation().getLongitude());
+       // Optional<Geolocalisation> optionalGeolocalisation = geolocalisationRepository.findByLatitudeAndLongitude(utilisateur.getGeolocalisation().getLatitude(), utilisateur.getGeolocalisation().getLongitude());
+        Optional<Geolocalisation> optionalGeolocalisation = geolocalisationRepository.findById(utilisateur.getGeolocalisation().getId());
 
         Utilisateur utilisateur1;
 
@@ -71,7 +85,6 @@ public class UtilisateurController {
 
     @DeleteMapping(path = "{id}")
     public ResponseEntity<Object> deleteUtilisateur(@PathVariable Long id) {
-
         utilisateurRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

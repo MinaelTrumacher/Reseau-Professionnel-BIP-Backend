@@ -1,23 +1,22 @@
 package afpa.mra.entities;
 
 import jakarta.persistence.*;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "utilisateurs")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Transactional
 public class Utilisateur {
 	
     @Id
@@ -47,10 +46,12 @@ public class Utilisateur {
     @Column(nullable = false)
     private String etatInscription;
 
-    @ManyToOne
-    @JoinColumn(name = "entreprise_id", nullable = true)
-    private Entreprise entreprise;
-    
+    @Column(nullable = true)
+    private  String urlPhoto;
+
+    @Column(nullable = true)
+    private String urlBanniere;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "geolocalisation_id", nullable = true)
     private Geolocalisation geolocalisation;
@@ -63,4 +64,12 @@ public class Utilisateur {
     @Column(nullable = false)
     @UpdateTimestamp
     private Date dateModification;
+
+    @OneToMany(mappedBy = "utilisateur")
+    @JsonManagedReference
+    private List<Embauche> embauches;
+
+    @OneToMany(mappedBy = "utilisateur")
+    @JsonManagedReference
+    private List<Stage> stages;
 }

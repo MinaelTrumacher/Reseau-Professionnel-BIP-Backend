@@ -1,16 +1,19 @@
 package afpa.mra.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
-
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 @Data
 @Entity
-@Table(name = "session")
+@Table(name = "sessions")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Session {
 	
     @Id
@@ -25,15 +28,16 @@ public class Session {
     private String centre;
     
     @Column(nullable = false)
-    private Date dateDebut;
+    private LocalDate dateDebut;
     
     @Column(nullable = false)
-    private Date dateFin;
+    private LocalDate dateFin;
+
+    @OneToMany(mappedBy = "session")
+    @JsonManagedReference
+    private List<Suivi> suivis;
     
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<Utilisateur> utilisateurs;
-    
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Formation formation;
     
 }

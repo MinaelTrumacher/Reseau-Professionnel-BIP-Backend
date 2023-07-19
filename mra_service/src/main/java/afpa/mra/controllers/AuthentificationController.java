@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,13 +22,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import afpa.mra.entities.Entreprise;
 import afpa.mra.entities.Geolocalisation;
 import afpa.mra.entities.Utilisateur;
 import afpa.mra.entities.VerificationToken;
-import afpa.mra.repositories.EntrepriseRepository;
 import afpa.mra.repositories.GeolocalisationRepository;
 import afpa.mra.repositories.UtilisateurRepository;
+import afpa.mra.security.DecryptService;
 import afpa.mra.security.TokenService;
 import afpa.mra.services.VerificationTokenService;
 
@@ -42,13 +42,14 @@ public class AuthentificationController {
     @Autowired
     public GeolocalisationRepository geolocalisationRepository;
     @Autowired
-    private EntrepriseRepository entrepriseRepository;
-    @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JavaMailSender mailSender;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private DecryptService decryptService;
+
 
 
     @PostMapping("/login")
@@ -57,7 +58,7 @@ public class AuthentificationController {
         if (checkUtilisateur.isPresent()) {
             Utilisateur utilisateur = checkUtilisateur.get();
             String etat = utilisateur.getEtatInscription();
-            if ("authorisé".equals(etat)) { 
+            if ("autorisé".equals(etat)) { 
                 String token = tokenService.generateToken(authentication);
                 Map<String, Object> responseBody = new HashMap<>();
                 responseBody.put("token", token);
@@ -73,34 +74,15 @@ public class AuthentificationController {
         }
     }
 
-    @GetMapping("/bloque") // pour tester spring security
-    public String bloque() {
-        return "c'est un endpoint bloqué";
-    }
-
-    @GetMapping("/free") // pour tester spring security
-    public String free() {
-        return "c'est un endpoint ouvert";
-    }
 
     @PostMapping("/register")
     public ResponseEntity<?> insert(@RequestBody Utilisateur user) {
-        if (!"apprenant".equals(user.getRole().toString())){
-            Entreprise entrepriseRecue = user.getEntreprise();
-            if (entrepriseRecue != null) {
-                Optional<Entreprise> entrepriseBD = entrepriseRepository.findBySiren(entrepriseRecue.getSiren());
-                if (!entrepriseBD.isPresent()){
-                    entrepriseRepository.save(user.getEntreprise()); // salvar na DB a empresa a empresa
-                }
-            }
-        }else{
-            user.setEntreprise(null);
-        }
         Optional<Utilisateur> utilisateurTrouve = utilisateurRepository.findByEmail(user.getEmail());
         if (utilisateurTrouve.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("L'utilisateur avec email " + user.getEmail() + " déjà existe");
         }
-        String encryptedPassword = passwordEncoder.encode(user.getMdp());
+        String decryptedReceivedMdP = this.decryptService.decrypt(user.getMdp()); // decryptage du mdp envoye du front
+        String encryptedPassword = passwordEncoder.encode(decryptedReceivedMdP);
         user.setMdp(encryptedPassword);
         user.setEtatInscription("vérif mail");
         Long geolocalisationId = user.getGeolocalisation().getId();
@@ -113,7 +95,11 @@ public class AuthentificationController {
         String validationToken = UUID.randomUUID().toString();
         verificationTokenService.saveVerificationToken(savedUser, validationToken);
         sendValidationEmail(savedUser.getEmail(), validationToken); 
-        return ResponseEntity.ok(savedUser);
+        Map<String, Object> customResponse = new HashMap<>();
+        customResponse.put("message", "Utilisateur enregistré");
+        customResponse.put("status", 200);
+        return ResponseEntity.ok(customResponse);
+
     }
 
 
@@ -137,7 +123,7 @@ public class AuthentificationController {
             } else {
                 Utilisateur utilisateurVerifie = verificationToken.getUtilisateur();
                 if (utilisateurVerifie != null) {
-                    utilisateurVerifie.setEtatInscription("authorisé");
+                    utilisateurVerifie.setEtatInscription("autorisé");
                     utilisateurRepository.save(utilisateurVerifie);
                     modelAndView.addObject("message", "Vous avez été vérifié avec succès. Vous pouvez maintenant vous connecter à votre compte!");
                     modelAndView.setViewName("verification-success");

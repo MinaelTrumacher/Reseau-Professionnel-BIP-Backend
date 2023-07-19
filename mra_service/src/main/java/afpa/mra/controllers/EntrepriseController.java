@@ -2,14 +2,15 @@ package afpa.mra.controllers;
 
 import afpa.mra.entities.Entreprise;
 import afpa.mra.repositories.EntrepriseRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*")
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/entreprises")
 public class EntrepriseController {
 
@@ -27,17 +28,11 @@ public class EntrepriseController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Entreprise> getEntreprise(@PathVariable("id") Long id) {
-        return entrepriseRepository.findById(id);
-    }
+    public Optional<Entreprise> getEntreprise(@PathVariable("id") Long id) { return entrepriseRepository.findById(id); }
 
     @PutMapping
-    public void updateEntreprise(@RequestBody Entreprise entreprise) {
-        entrepriseRepository.save(entreprise);
-    }
+    public void updateEntreprise(@RequestBody Entreprise entreprise) { entrepriseRepository.save(entreprise); }
 
     @DeleteMapping("/{id}")
-    public void deleteEntreprise(@PathVariable("id") Long id) {
-        entrepriseRepository.deleteById(id);
-    }
+    public void deleteEntreprise(@PathVariable("id") Long id) { entrepriseRepository.deleteById(id); }
 }

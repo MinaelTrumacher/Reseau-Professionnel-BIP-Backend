@@ -1,5 +1,7 @@
 package afpa.mra.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,9 +10,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.util.Date;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "publications")
-@Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Publication {
 
     @Id
@@ -18,22 +21,13 @@ public class Publication {
     private Long id;
     
     @Column(nullable = false)
-    private String titre;
+    private String title;
     
     @Column(nullable = false)
     private String categorie;
     
     @Column(nullable = false)
     private String contenu;
-
-    @OneToMany
-    private List<Interaction> interactions;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Geolocalisation geolocalisation;
-
-    @ManyToOne
-    private Utilisateur utilisateur;
     
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
@@ -43,5 +37,15 @@ public class Publication {
     @Column(nullable = false)
     @UpdateTimestamp
     private Date dateModification;
+
+    @OneToMany(mappedBy = "publication")
+    @JsonManagedReference
+    private List<Interaction> interactions;
+
+    @ManyToOne
+    private Geolocalisation geolocalisation;
+
+    @ManyToOne
+    private Utilisateur utilisateur;
 
 }

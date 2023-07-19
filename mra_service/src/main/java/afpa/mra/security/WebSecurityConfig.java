@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -44,6 +44,11 @@ public class WebSecurityConfig {
     private UtilisateurDetailService utilisateurDetailService;
 
     @Bean
+    public CustomAuthenticationProvider customAuthenticationProvider() {
+        return new CustomAuthenticationProvider();
+    }
+
+    @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -59,11 +64,13 @@ public class WebSecurityConfig {
                     "/api/reset/**",
                     "/api/utilisateur",
                     "/api/publication/**",
-                    "/geolocalisation/**"
+                    "/geolocalisations/**",
+                    "/contact"
                     ).permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .userDetailsService(utilisateurDetailService)
+                .authenticationProvider(customAuthenticationProvider())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())))
@@ -71,6 +78,8 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .build();
     }
+
+
 
 
     @Bean

@@ -1,25 +1,24 @@
 package afpa.mra.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.transaction.Transactional;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "formations")
-@Getter
-@Setter
-@Transactional
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Formation {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Titre titre;
     
     @Column(nullable = false)
     private String codeRncp;
-
-    @Column(nullable = false)
-    private String titre;
 }

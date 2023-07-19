@@ -5,29 +5,23 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Date;
 @Data
 @Entity
-@Table(name = "embauches")
+@Table(name = "suivis")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Embauche {
-	
+public class Suivi {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Long id;
 
-    @Column(nullable = false)
-    private Date dateDebut;
-
-    @Column
-    private Date dateFin;
-
     @ManyToOne()
-    @JsonBackReference
     @JoinColumn(nullable=false, name = "utilisateur_id")
     private Utilisateur utilisateur;
 
-    @JoinColumn(nullable = false)
-    @ManyToOne
-    private Entreprise entreprise;
+    @ManyToOne()
+    @JsonBackReference
+    @JoinColumn(nullable=false, name = "session_id")
+    private Session session;
 }

@@ -1,145 +1,73 @@
 package afpa.mra.controllers;
 
 import afpa.mra.entities.Message;
+import afpa.mra.entities.MessageDto;
 import afpa.mra.entities.Utilisateur;
-import afpa.mra.repositories.UtilisateurRepository;
 import afpa.mra.repositories.MessageRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
+import afpa.mra.repositories.UtilisateurRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
+
+import static afpa.mra.entities.MessageDto.ConvertToMessageDto;
 
 @RestController
-@RequestMapping("/api/messages")
+@CrossOrigin(origins = "*")
+@RequestMapping(path = "/messages")
 public class MessageController {
-    private final EntityManagerFactory entityManagerFactory;
-    private final UtilisateurRepository utilisateurRepository;
+
     private final MessageRepository messageRepository;
-    public MessageController(EntityManagerFactory entityManagerFactory, UtilisateurRepository utilisateurRepository, MessageRepository messageRepository) {
-        this.entityManagerFactory = entityManagerFactory;
-        this.utilisateurRepository = utilisateurRepository;
+    private final UtilisateurRepository utilisateurRepository;
+
+    public MessageController(MessageRepository messageRepository, UtilisateurRepository utilisateurRepository) {
         this.messageRepository = messageRepository;
+        this.utilisateurRepository = utilisateurRepository;
     }
 
     @PostMapping
-    public ResponseEntity<String> createMessage(@RequestBody Message message) {
-        if(message.getContenu() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Votre message n'a pas de contenu.");
+    public ResponseEntity<Object> CreateMessage(@RequestBody Message message) {
+
+        Optional<Utilisateur> optionalDestinataire = utilisateurRepository.findById(message.getDestinataire().getId());
+        Optional<Utilisateur> optionalExpediteur = utilisateurRepository.findById(message.getExpediteur().getId());
+
+        if (optionalDestinataire.isPresent() && optionalExpediteur.isPresent()) {
+            message.setDestinataire(optionalDestinataire.get());
+            message.setExpediteur(optionalExpediteur.get());
+            messageRepository.save(message);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
 
-        Utilisateur existingUtilisateur = utilisateurRepository.findById(message.getExpediteur().getId()).orElse(null);
-        if(existingUtilisateur != null) {
-            message.setExpediteur(existingUtilisateur);
+        Map<String, Object> body = new HashMap<>();
+        if (optionalDestinataire.isEmpty()){
+            body.put("erreur", "le destinataire n'a pas été trouvé !");
+        }else {
+            body.put("erreur", "l'expéditeur n'a pas été trouvé !");
         }
+        return new ResponseEntity<>(body,HttpStatus.NOT_FOUND);
 
-        Utilisateur existingUtilisateur1 = utilisateurRepository.findById(message.getDestinataire().getId()).orElse(null);
-        if(existingUtilisateur1 != null) {
-            message.setDestinataire(existingUtilisateur1);
-        }
-
-        Message createdMessage = messageRepository.save(message);
-        if(createdMessage != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body("Le message a été crée.");
-        }
-        else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur a eu lieu lors de la création de votre message.");
-        }
-
-        /*try(EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            EntityTransaction transaction = entityManager.getTransaction();
-            try {
-                transaction.begin();
-                entityManager.persist(message);
-                transaction.commit();
-                return ResponseEntity.status(HttpStatus.CREATED).body("Votre message a bien été crée.");
-            }
-            catch (Exception e) {
-                if(transaction != null && transaction.isActive()) {
-                    transaction.rollback();
-                }
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur s'est produite durant la création de votre message.");
-            }
-        }*/
     }
 
-    @GetMapping
-    public ResponseEntity<List<Message>> getAllMessages() {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            List<Message> messages = entityManager.createQuery("SELECT m from Message m", Message.class)
-                    .getResultList();
-            return ResponseEntity.ok(messages);
-        }
+    @GetMapping(path = "{expediteur_id}")
+    public ResponseEntity<Object> getLastMessageOfAllChats(@PathVariable Long expediteur_id) {
+
+        List<Message> messages = messageRepository.findLastMessagesWithUser(expediteur_id);
+        List<MessageDto> messageDtos = new ArrayList<>();
+        messages.forEach(message -> {
+            message.setDestinataire(utilisateurRepository.findById(message.getDestinataire().getId()).get());
+            message.setExpediteur(utilisateurRepository.findById(message.getExpediteur().getId()).get());
+            messageDtos.add(ConvertToMessageDto(message));
+        });
+        return new ResponseEntity<>(messageDtos, HttpStatus.OK);
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Message> getMessageById(@PathVariable Long id) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            Message message = entityManager.find(Message.class, id);
-            if(message != null) {
-                return ResponseEntity.ok(message);
-            }
-            else {
-                return ResponseEntity.notFound().build();
-            }
-        }
-    }
+    @GetMapping(path = "{expediteur_id}/{destinataire_id}")
+    public ResponseEntity<Object> getAllMessagesOfChat(@PathVariable Long expediteur_id, @PathVariable Long destinataire_id) {
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateMessage(@PathVariable Long id, @RequestBody Message updatedMessage) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            EntityTransaction transaction = entityManager.getTransaction();
-            try {
-                transaction.begin();
-                Message message = entityManager.find(Message.class, id);
-                if(message != null) {
-                    message.setContenu(updatedMessage.getContenu());
-                    entityManager.merge(message);
-                    transaction.commit();
-                    return ResponseEntity.ok("Le message a été mis à jour avec succès.");
-                }
-                else {
-                    return ResponseEntity.notFound().build();
-                }
-            }
-            catch (Exception e) {
-                if(transaction != null && transaction.isActive()) {
-                    transaction.rollback();
-                }
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur s'est produite lors de la mise à jour de votre message.");
-            }
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteMessage(@PathVariable Long id) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            EntityTransaction transaction = entityManager.getTransaction();
-            try {
-                transaction.begin();
-                Message message = entityManager.find(Message.class, id);
-                if(message != null) {
-                    entityManager.remove(message);
-                    transaction.commit();
-                    return ResponseEntity.ok("Le message a été supprimé avec succès.");
-                }
-                else {
-                    return ResponseEntity.notFound().build();
-                }
-            }
-            catch (Exception e) {
-                if(transaction != null && transaction.isActive()) {
-                    transaction.rollback();
-                }
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur s'est produite lors de la suppression de votre message.");
-            }
-        }
-
+        List<Message> messages = messageRepository.findByExpediteurIdAndDestinataireIdOrExpediteurIdAndDestinataireIdOrderByDateEnvoiAsc(expediteur_id, destinataire_id, destinataire_id, expediteur_id);
+        List<MessageDto> messageDtos = new ArrayList<>();
+        messages.forEach(message -> messageDtos.add(ConvertToMessageDto(message)));
+        return new ResponseEntity<>(messageDtos, HttpStatus.OK);
     }
 }

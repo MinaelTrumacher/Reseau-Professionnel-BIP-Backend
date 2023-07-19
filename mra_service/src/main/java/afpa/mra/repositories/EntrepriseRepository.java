@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EntrepriseRepository extends JpaRepository<Entreprise, Long> {
 
-    Optional<Entreprise> findBySiren(Long siren);
+    Optional<Entreprise> findBySiret(Long siret);
 
 }
