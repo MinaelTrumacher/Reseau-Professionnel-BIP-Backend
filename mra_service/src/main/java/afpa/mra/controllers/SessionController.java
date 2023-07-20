@@ -1,6 +1,7 @@
 package afpa.mra.controllers;
 
 import afpa.mra.entities.Formation;
+import afpa.mra.entities.Publication;
 import afpa.mra.entities.Session;
 import afpa.mra.repositories.FormationRepository;
 import afpa.mra.repositories.SessionRepository;
@@ -19,29 +20,31 @@ public class SessionController {
 	
 	@Autowired
 	private SessionRepository sessionRepository ;
+
 	@Autowired
 	private FormationRepository formationRepository;
 
 	@PostMapping
 	public Session createSession(@RequestBody Session session) {
-
 		Formation formation = formationRepository.findById(session.getFormation().getId()).get();
 		session.setFormation(formation);
 
 		return sessionRepository.save(session);
 	}
 
-	@GetMapping("/{id}")
-	public Optional<Session> getSession(@PathVariable Long id) {
-		return sessionRepository.findById(id);
+	@GetMapping(path = "{id}")
+	public Session getSession(@PathVariable Long id) {
+		Optional<Session> optionalSession = sessionRepository.findById(id);
+		return optionalSession.orElse(null);
 	}
 	
     @GetMapping
     public List<Session> getAllSession() {
-        return sessionRepository.findAll();
+		List<Session> sessionList = sessionRepository.findAll();
+		return sessionList;
     }
 	
-	@PutMapping(path = "/{id}")
+	@PutMapping
 	public ResponseEntity<Object> updateSession(@RequestBody Session session) {
 		Optional<Formation> optionalFormation = formationRepository.findById(session.getFormation().getId());
 		 Session session1;
@@ -55,7 +58,7 @@ public class SessionController {
 		return new ResponseEntity<>(session1, HttpStatus.OK);
 	}
 	
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "{id}")
     public String deleteSession(@PathVariable Long id) {
          sessionRepository.deleteById(id);
          return "Session Supprimée";

@@ -1,53 +1,59 @@
 package afpa.mra.controllers;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import afpa.mra.entities.Geolocalisation;
 import afpa.mra.repositories.GeolocalisationRepository;
-import afpa.mra.services.GeolocalisationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/geolocalisations")
 public class GeolocalisationController {
 
     @Autowired
-	private GeolocalisationRepository geolocalisationRepository ;
-	@Autowired
-	private GeolocalisationService	geolocalisationService;
-	
+    private GeolocalisationRepository geolocalisationRepository;
 
-	@GetMapping("/codes-postaux/{codePostal}")
-	public List<Geolocalisation> getByCodePostal(@PathVariable String codePostal) {
-	    return geolocalisationRepository.findByCodePostal(codePostal);
-	}
+    @PostMapping
+    public Geolocalisation createGeolocalisation(@RequestBody Geolocalisation geolocalisation) {
+        return geolocalisationRepository.save(geolocalisation);
+    }
 
-	@GetMapping("/{id}")
-    public Geolocalisation getGeolocalisation(@PathVariable Long id) {
-        return geolocalisationService.getGeolocalisation(id);
+    @GetMapping("/codes-postaux/{codePostal}")
+    public List<Geolocalisation> getByCodePostal(@PathVariable String codePostal) {
+        return geolocalisationRepository.findByCodePostal(codePostal);
     }
 
     @GetMapping
     public List<Geolocalisation> getAllGeolocalisation() {
-        return geolocalisationService.getAllGeolocalisation();
+        List<Geolocalisation> geolocalisationList = geolocalisationRepository.findAll();
+        return geolocalisationList;
     }
-    @PutMapping("/{id}")
+
+    @GetMapping(path = "{id}")
+    public Geolocalisation getGeolocalisation(@PathVariable Long id) {
+        return geolocalisationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Géolocalisation non trouvée avec l'id: " + id));
+    }
+
+    @PutMapping
     public Geolocalisation updateGeolocalisation(@PathVariable Long id, @RequestBody Geolocalisation geolocalisation) {
-        return geolocalisationService.updateGeolocalisation(id, geolocalisation);
+        Optional<Geolocalisation> optionalGeolocalisation = geolocalisationRepository.findById(id);
+
+        Geolocalisation existingGeolocalisation = optionalGeolocalisation.get();
+        if (optionalGeolocalisation.isPresent()) {
+            existingGeolocalisation.setVille(geolocalisation.getVille());
+            existingGeolocalisation.setRegion(geolocalisation.getRegion());
+            existingGeolocalisation.setLatitude(geolocalisation.getLatitude());
+            existingGeolocalisation.setLongitude(geolocalisation.getLongitude());
+        }
+        return geolocalisationRepository.save(existingGeolocalisation);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(path = "{id}")
     public void deleteGeolocalisation(@PathVariable Long id) {
-        geolocalisationService.deleteGeolocalisation(id);
+        geolocalisationRepository.deleteById(id);
     }
-    
 }
-

@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "stages")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "FAIL_ON_EMPTY_BEANS"})
 public class Stage {
 	
     @Id
@@ -27,16 +27,16 @@ public class Stage {
     
     @Column(nullable = false)
     private Date dateFin;
-    
-    @ManyToOne()
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     @JoinColumn(nullable=false, name = "utilisateur_id")
     private Utilisateur utilisateur;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Formation formation;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Entreprise entreprise;
-}
 
+}

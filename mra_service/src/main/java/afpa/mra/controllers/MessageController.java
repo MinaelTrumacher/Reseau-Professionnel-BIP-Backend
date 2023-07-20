@@ -5,6 +5,7 @@ import afpa.mra.entities.MessageDto;
 import afpa.mra.entities.Utilisateur;
 import afpa.mra.repositories.MessageRepository;
 import afpa.mra.repositories.UtilisateurRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,16 +19,14 @@ import static afpa.mra.entities.MessageDto.ConvertToMessageDto;
 @RequestMapping(path = "/messages")
 public class MessageController {
 
-    private final MessageRepository messageRepository;
-    private final UtilisateurRepository utilisateurRepository;
+    @Autowired
+    private MessageRepository messageRepository;
 
-    public MessageController(MessageRepository messageRepository, UtilisateurRepository utilisateurRepository) {
-        this.messageRepository = messageRepository;
-        this.utilisateurRepository = utilisateurRepository;
-    }
+    @Autowired
+    private UtilisateurRepository utilisateurRepository;
 
     @PostMapping
-    public ResponseEntity<Object> CreateMessage(@RequestBody Message message) {
+    public ResponseEntity<Object> createMessage(@RequestBody Message message) {
 
         Optional<Utilisateur> optionalDestinataire = utilisateurRepository.findById(message.getDestinataire().getId());
         Optional<Utilisateur> optionalExpediteur = utilisateurRepository.findById(message.getExpediteur().getId());

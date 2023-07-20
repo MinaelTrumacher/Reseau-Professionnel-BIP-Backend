@@ -5,153 +5,174 @@ import afpa.mra.repositories.EntrepriseRepository;
 import afpa.mra.repositories.FormationRepository;
 import afpa.mra.repositories.StageRepository;
 import afpa.mra.repositories.UtilisateurRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.EntityTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/stages")
 public class StageController {
-    @Autowired
-    private final EntityManagerFactory entityManagerFactory;
-    @Autowired
-    private final UtilisateurRepository utilisateurRepository;
-    @Autowired
-    private final EntrepriseRepository entrepriseRepository;
-    @Autowired
-    private final FormationRepository formationRepository;
-    @Autowired
-    private final StageRepository stageRepository;
 
     @Autowired
-    public StageController(EntityManagerFactory entityManagerFactory,
-                           UtilisateurRepository utilisateurRepository,
-                           EntrepriseRepository entrepriseRepository,
-                           FormationRepository formationRepository, StageRepository stageRepository) {
-        this.entityManagerFactory = entityManagerFactory;
-        this.utilisateurRepository = utilisateurRepository;
-        this.entrepriseRepository = entrepriseRepository;
-        this.formationRepository = formationRepository;
-        this.stageRepository = stageRepository;
-    }
+    private UtilisateurRepository utilisateurRepository;
+
+    @Autowired
+    private EntrepriseRepository entrepriseRepository;
+
+    @Autowired
+    private FormationRepository formationRepository;
+
+    @Autowired
+    private StageRepository stageRepository;
 
     @PostMapping
-    public ResponseEntity<String> createStage(@RequestBody Stage stage) {
-        if (stage.getType() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Le type du stage n'a pas été précisé.");
-        }
+    public ResponseEntity<Object> createStage(@RequestBody Stage stage) {
+        Optional<Utilisateur> optionalUtilisateur = utilisateurRepository.findById(stage.getUtilisateur().getId());
+        Optional<Entreprise> optionalEntreprise = entrepriseRepository.findById(stage.getEntreprise().getId());
+        Optional<Formation> optionalFormation = formationRepository.findById(stage.getFormation().getId());
 
-        Utilisateur existingUtilisateur = utilisateurRepository.findById(stage.getUtilisateur().getId()).orElse(null);
-        if (existingUtilisateur != null) {
-            stage.setUtilisateur(existingUtilisateur);
-        }
+        Stage stage1;
 
-        Entreprise existingEntreprise = entrepriseRepository.findById(stage.getEntreprise().getId()).orElse(null);
-        if (existingEntreprise != null) {
-            stage.setEntreprise(existingEntreprise);
-        }
-
-        Formation existingFormation = formationRepository.findById(stage.getFormation().getId()).orElse(null);
-        if (existingFormation != null) {
-            stage.setFormation(existingFormation);
-        }
-
-        Stage createdStage = stageRepository.save(stage);
-        if (createdStage != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body("Le stage a été créé avec succès");
+        if (optionalUtilisateur.isEmpty()) {
+            Utilisateur utilisateur = utilisateurRepository.save(stage.getUtilisateur());
+            stage.setUtilisateur(utilisateur);
         } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur s'est produite lors de la création du stage");
+            stage.setUtilisateur(optionalUtilisateur.get());
         }
+
+        if (optionalEntreprise.isEmpty()) {
+            Entreprise entreprise = entrepriseRepository.save((stage.getEntreprise()));
+            stage.setEntreprise(entreprise);
+        } else  {
+            stage.setEntreprise(optionalEntreprise.get());
+        }
+
+        if (optionalFormation.isEmpty()) {
+            Formation formation = formationRepository.save((stage.getFormation()));
+            stage.setFormation(formation);
+        } else {
+            stage.setFormation(optionalFormation.get());
+        }
+
+        stage1 = stageRepository.save(stage);
+        return new ResponseEntity<>(stage1, HttpStatus.OK);
     }
 
-   /* @GetMapping
-    public ResponseEntity<List<Stage>> getAllStages() {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            List<Stage> stages = entityManager.createQuery("SELECT s FROM Stage s", Stage.class)
-                    .getResultList();
-            return ResponseEntity.ok(stages);
-        }
-    }*/
     @GetMapping
-    public List<Stage> getAllStage() {
+    public List<Map<String, Object>> getAllStage() {
         List<Stage> stageList = stageRepository.findAll();
-        return stageList;
+
+        List<Map<String, Object>> responseList = new ArrayList<>();
+        for (Stage stage : stageList) {
+            Map<String, Object> stageMap = new HashMap<>();
+            stageMap.put("id", stage.getId());
+            stageMap.put("type", stage.getType());
+            stageMap.put("dateDebut", stage.getDateDebut());
+            stageMap.put("dateFin", stage.getDateFin());
+
+            // Retrieve the associated Utilisateur object
+            Utilisateur utilisateur = stage.getUtilisateur();
+            Map<String, Object> utilisateurMap = new HashMap<>();
+            utilisateurMap.put("id", utilisateur.getId());
+            utilisateurMap.put("nom", utilisateur.getNom());
+            utilisateurMap.put("prenom", utilisateur.getPrenom());
+            // Add other relevant utilisateur fields here
+
+            // Retrieve the associated Entreprise object
+            Entreprise entreprise = stage.getEntreprise();
+            Map<String, Object> entrepriseMap = new HashMap<>();
+            entrepriseMap.put("id", entreprise.getId());
+            entrepriseMap.put("raisonSociale", entreprise.getRaisonSociale());
+            entrepriseMap.put("siret", entreprise.getSiret());
+            // Add other relevant entreprise fields here
+
+            // Retrieve the associated Formation object
+            Formation formation = stage.getFormation();
+            Map<String, Object> formationMap = new HashMap<>();
+            formationMap.put("id", formation.getId());
+            formationMap.put("titre", formation.getTitre());
+            formationMap.put("codeRncp", formation.getCodeRncp());
+            // Add other relevant entreprise fields here
+
+            stageMap.put("utilisateur", utilisateurMap);
+            stageMap.put("entreprise", entrepriseMap);
+            stageMap.put("formation", entrepriseMap);
+
+            responseList.add(stageMap);
+        }
+        return responseList;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Stage> getStageById(@PathVariable Long id) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            Stage stage = entityManager.find(Stage.class, id);
-            if (stage != null) {
-                return ResponseEntity.ok(stage);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+    @GetMapping(path = "{id}")
+    public ResponseEntity<Object> getStage(@PathVariable Long id) {
+        Stage stage = stageRepository.findById(id).orElse(null);
+        if (stage == null) {
+            // Si le stage n'est pas trouvé, retourner une réponse avec un message d'erreur
+            Map<String, Object> body = new HashMap<>();
+            body.put("response", "Aucun stage trouvé !");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
+
+        // Récupérer l'objet Utilisateur associé en utilisant l'id_utilisateur
+        Utilisateur utilisateur = stage.getUtilisateur();
+        utilisateur.setStages(null); // Set the utilisateur to null to avoid infinite recursion in JSON serialization
+
+
+        // Créer une nouvelle map de réponse qui inclut l'objet Utilisateur
+        Map<String, Object> stageMap = new HashMap<>(); //responseMap remplacé par stageMap
+        stageMap.put("id", stage.getId());
+        stageMap.put("type", stage.getType());
+        stageMap.put("dateDebut", stage.getDateDebut());
+        stageMap.put("dateFin", stage.getDateFin());
+        stageMap.put("utilisateur", utilisateur);
+        stageMap.put("entreprise", stage.getEntreprise());
+        stageMap.put("formation", stage.getFormation());
+
+        // Retourner la réponse JSON
+        return new ResponseEntity<>(stageMap, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateStage(@PathVariable Long id, @RequestBody Stage updatedStage) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            EntityTransaction transaction = entityManager.getTransaction();
-            try {
-                transaction.begin();
-                Stage stage = entityManager.find(Stage.class, id);
-                if (stage != null) {
-                    stage.setType(updatedStage.getType());
-                    // Mettez à jour les autres attributs du stage selon vos besoins
-                    entityManager.merge(stage);
-                    transaction.commit();
-                    return ResponseEntity.ok("Stage mis à jour avec succès");
-                } else {
-                    return ResponseEntity.notFound().build();
-                }
-            } catch (Exception e) {
-                if (transaction != null && transaction.isActive()) {
-                    transaction.rollback();
-                }
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Une erreur s'est produite lors de la mise à jour du stage");
-            }
+    @PutMapping
+    public ResponseEntity<Object> updateStage(@RequestBody Stage stage) {
+        Optional<Utilisateur> optionalUtilisateur = utilisateurRepository.findById(stage.getUtilisateur().getId());
+        Optional<Entreprise> optionalEntreprise = entrepriseRepository.findById(stage.getEntreprise().getId());
+        Optional<Formation> optionalFormation = formationRepository.findById(stage.getFormation().getId());
+
+        Stage stage1;
+
+        if (optionalUtilisateur.isEmpty()) {
+            Utilisateur utilisateur = utilisateurRepository.save(stage.getUtilisateur());
+            stage.setUtilisateur(utilisateur);
+        } else {
+            stage.setUtilisateur(optionalUtilisateur.get());
         }
+
+        if (optionalEntreprise.isEmpty()) {
+            Entreprise entreprise = entrepriseRepository.save((stage.getEntreprise()));
+            stage.setEntreprise(entreprise);
+        } else  {
+            stage.setEntreprise(optionalEntreprise.get());
+        }
+
+        if (optionalFormation.isEmpty()) {
+            Formation formation = formationRepository.save((stage.getFormation()));
+            stage.setFormation(formation);
+        } else {
+            stage.setFormation(optionalFormation.get());
+        }
+
+        stage1 = stageRepository.save(stage);
+        return new ResponseEntity<>(stage1, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteStage(@PathVariable Long id) {
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            EntityTransaction transaction = entityManager.getTransaction();
-            try {
-                transaction.begin();
-                Stage stage = entityManager.find(Stage.class, id);
-                if (stage != null) {
-                    // Dissocier l'utilisateur et la formation du stage
-                    stage.setUtilisateur(null);
-                    stage.setFormation(null);
-
-                    entityManager.remove(stage);
-                    transaction.commit();
-                    return ResponseEntity.ok("Stage supprimé avec succès");
-                } else {
-                    return ResponseEntity.notFound().build();
-                }
-            } catch (Exception e) {
-                if (transaction != null && transaction.isActive()) {
-                    transaction.rollback();
-                }
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Une erreur s'est produite lors de la suppression du stage");
-            }
-        }
+    @DeleteMapping(path = "{id}")
+    public ResponseEntity<Object> deleteStage(@PathVariable Long id) {
+        stageRepository.deleteById(id);
+        return  new ResponseEntity<>(HttpStatus.OK);
     }
 }
