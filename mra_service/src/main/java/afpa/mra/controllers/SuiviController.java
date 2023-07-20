@@ -22,18 +22,13 @@ import java.util.Optional;
 public class SuiviController {
 
     @Autowired
-    private final SuiviRepository suiviRepository;
-    @Autowired
-    private final UtilisateurRepository utilisateurRepository;
-    @Autowired
-    private final SessionRepository sessionRepository;
+    private SuiviRepository suiviRepository;
 
     @Autowired
-    public SuiviController(SuiviRepository suiviRepository, UtilisateurRepository utilisateurRepository, SessionRepository sessionRepository) {
-        this.suiviRepository = suiviRepository;
-        this.utilisateurRepository = utilisateurRepository;
-        this.sessionRepository = sessionRepository;
-    }
+    private UtilisateurRepository utilisateurRepository;
+
+    @Autowired
+    private SessionRepository sessionRepository;
 
     @PostMapping
     public Suivi createSuivi(@RequestBody Suivi suivi) {
@@ -45,7 +40,13 @@ public class SuiviController {
         return suiviRepository.save(suivi);
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping
+    public List<Suivi> getAllSuivi() {
+        List<Suivi> suiviList = suiviRepository.findAll();
+        return suiviList;
+    }
+
+    @GetMapping(path = "{id}")
     public ResponseEntity<Object> getSuivi(@PathVariable Long id) {
         Optional<Suivi> optionalSuivi = suiviRepository.findById(id);
         if (optionalSuivi.isEmpty()) {
@@ -53,17 +54,10 @@ public class SuiviController {
             body.put("response", "Aucun suivi trouvé !");
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
-//        System.out.println("coucou");
         return new ResponseEntity<>(optionalSuivi.get(), HttpStatus.OK);
     }
 
-    @GetMapping
-    public List<Suivi> suiviList() {
-        List<Suivi> suiviList = suiviRepository.findAll();
-        return suiviList;
-    }
-
-    @PutMapping(path = "/{id}")
+    @PutMapping
     public ResponseEntity<Object> updateSuivi(@RequestBody Suivi suivi) {
         Optional<Session> optionalSession = sessionRepository.findById(suivi.getSession().getId());
         Optional<Utilisateur> optionalUtilisateur = utilisateurRepository.findById(suivi.getUtilisateur().getId());
@@ -88,7 +82,7 @@ public class SuiviController {
         return new ResponseEntity<>(suivi1, HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "{id}")
     public ResponseEntity<Object> deleteSuivi(@PathVariable Long id) {
         suiviRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -1,5 +1,6 @@
 package afpa.mra.controllers;
 
+
 import afpa.mra.entities.Formation;
 import afpa.mra.repositories.FormationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,9 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 @RequestMapping("/formations")
 public class FormationController {
-    @Autowired
-    private final FormationRepository formationRepository;
 
     @Autowired
-    public FormationController(FormationRepository formationRepository) {
-        this.formationRepository = formationRepository;
-    }
+    private FormationRepository formationRepository;
 
     @PostMapping
     public ResponseEntity<Object> createFormation(@RequestBody Formation formation) {
@@ -37,8 +34,8 @@ public class FormationController {
         return formationList;
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity getFormationById(@PathVariable Long id) {
+    @GetMapping(path = "{id}")
+    public ResponseEntity getFormation(@PathVariable Long id) {
         Optional<Formation> optionalFormation = formationRepository.findById(id);
 
             if(optionalFormation.isEmpty()) {
@@ -49,14 +46,14 @@ public class FormationController {
                 return new ResponseEntity<>(optionalFormation.get(), HttpStatus.OK);
     }
 
-    @PutMapping(path = "/{id}")
+    @PutMapping
     public ResponseEntity<String> updateFormation(@RequestBody Formation formation) {
         Formation formation1 = formationRepository.save(formation);
         return ResponseEntity.ok("La formation à été mise à jour avec succès.");
     }
 
 
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "{id}")
     public ResponseEntity<Object> deleteFormation(@PathVariable Long id) {
        formationRepository.deleteById(id);
        return new ResponseEntity<>(HttpStatus.OK);

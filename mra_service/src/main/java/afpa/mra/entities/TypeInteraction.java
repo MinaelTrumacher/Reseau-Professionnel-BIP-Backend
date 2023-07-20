@@ -5,4 +5,3 @@ public enum TypeInteraction {
     signaler,
     postuler
 }
-

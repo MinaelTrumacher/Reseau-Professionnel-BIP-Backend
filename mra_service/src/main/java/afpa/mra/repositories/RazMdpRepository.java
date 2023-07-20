@@ -9,5 +9,5 @@ import afpa.mra.entities.Utilisateur;
 
 public interface RazMdpRepository extends JpaRepository<RazMdp, Long>{
     
-    Optional<RazMdp> findByCodeAndUtilisateur(Integer code, Utilisateur utilisateur);
+      Optional<RazMdp> findByCodeAndUtilisateur(Integer code, Utilisateur utilisateur);
 }

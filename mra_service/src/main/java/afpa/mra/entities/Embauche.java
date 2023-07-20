@@ -22,12 +22,13 @@ public class Embauche {
     @Column
     private Date dateFin;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     @JoinColumn(nullable=false, name = "utilisateur_id")
     private Utilisateur utilisateur;
 
-    @JoinColumn(nullable = false)
     @ManyToOne
+    @JoinColumn(nullable = false)
     private Entreprise entreprise;
+
 }
