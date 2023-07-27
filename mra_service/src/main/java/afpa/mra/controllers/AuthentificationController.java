@@ -32,7 +32,7 @@ import afpa.mra.security.TokenService;
 import afpa.mra.services.VerificationTokenService;
 
 @RestController
-@RequestMapping("api/authentification")
+@RequestMapping("/api/authentification")
 public class AuthentificationController {
 
     @Autowired

@@ -23,11 +23,14 @@ public class Message {
     
     @Column(nullable = false)
     private Boolean vu;
-    
-    @ManyToOne(cascade = CascadeType.ALL)
+
+    @Column
+    private Long supprimerParUserId;
+
+    @ManyToOne
     private Utilisateur expediteur;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Utilisateur destinataire;
     
     @Temporal(TemporalType.TIMESTAMP)
