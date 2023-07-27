@@ -21,7 +21,7 @@ import afpa.mra.repositories.UtilisateurRepository;
 import afpa.mra.services.PasswordService;
 
 @RestController
-@RequestMapping("api/reset")
+@RequestMapping("/api/reset")
 public class PasswordController {
 
     @Autowired
@@ -56,13 +56,6 @@ public class PasswordController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
    }
-
-    // @GetMapping("/form/{id}")
-    // public ModelAndView showResetPasswordForm(@PathVariable Long id, Model model) {
-    //     ModelAndView modelAndView = new ModelAndView("reset-password-form");
-    //     modelAndView.addObject("id", id);
-    //     return modelAndView;
-    // }
 
     @PostMapping("/change")
     public ResponseEntity<?> resetpassword(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("code") Integer code ){

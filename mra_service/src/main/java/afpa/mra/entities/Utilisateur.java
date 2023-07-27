@@ -1,18 +1,24 @@
 package afpa.mra.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 import java.util.Date;
 import java.util.List;
 
-@Data
 @Entity
 @Table(name = "utilisateurs")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Utilisateur {
 	
@@ -49,6 +55,10 @@ public class Utilisateur {
     @Column(nullable = true)
     private String urlBanniere;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "geolocalisation_id", nullable = true)
+    private Geolocalisation geolocalisation;
+
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -58,14 +68,11 @@ public class Utilisateur {
     @UpdateTimestamp
     private Date dateModification;
 
-    @ManyToOne
-    private Geolocalisation geolocalisation;
-
     @OneToMany(mappedBy = "utilisateur")
-    @JsonManagedReference// Annotation pour la sérialisation correcte des embauches
+    @JsonManagedReference
     private List<Embauche> embauches;
 
     @OneToMany(mappedBy = "utilisateur")
-    @JsonManagedReference// Annotation pour la sérialisation correcte des stages
+    @JsonManagedReference
     private List<Stage> stages;
 }

@@ -58,14 +58,13 @@ public class WebSecurityConfig {
         return http
                 .authorizeHttpRequests( auth -> {
                     auth.requestMatchers(
-                    "/api/authentification/free",
                     "/api/authentification/register",
                     "/api/authentification/validation",
                     "/api/reset/**",
                     "/api/utilisateur",
                     "/api/publication/**",
-                    "/geolocalisations/**",
-                    "/contact"
+                    "/api/geolocalisations/**",
+                    "/api/contact"
                     ).permitAll();
                     auth.anyRequest().authenticated();
                 })

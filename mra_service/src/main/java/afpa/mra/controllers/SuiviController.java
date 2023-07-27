@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/suivis")
+@RequestMapping("/api/suivis")
 public class SuiviController {
 
     @Autowired
