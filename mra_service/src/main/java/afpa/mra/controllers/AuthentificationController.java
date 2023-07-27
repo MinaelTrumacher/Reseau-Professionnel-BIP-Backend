@@ -141,7 +141,13 @@ public class AuthentificationController {
         Date expireDate = verificationToken.getExpireDate();
         Date currentDate = new Date();
         return expireDate != null && expireDate.before(currentDate);
-    }
-
     
+
+    }
+    
+    @GetMapping("/test")
+    public String test(){
+        return "C'est un test";
+    } 
+
 }

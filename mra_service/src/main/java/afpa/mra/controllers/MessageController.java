@@ -16,7 +16,7 @@ import static afpa.mra.entities.MessageDto.ConvertToMessageDto;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/messages")
+@RequestMapping(path = "/api/messages")
 public class MessageController {
 
     @Autowired

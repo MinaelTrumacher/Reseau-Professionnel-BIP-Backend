@@ -15,7 +15,7 @@ import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/stages")
+@RequestMapping("/api/stages")
 public class StageController {
 
     @Autowired

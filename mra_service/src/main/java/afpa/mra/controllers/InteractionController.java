@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/interactions")
+@RequestMapping("/api/interactions")
 public class InteractionController {
 
     @Autowired

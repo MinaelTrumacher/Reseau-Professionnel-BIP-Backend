@@ -41,13 +41,12 @@ public class TokenService {
 
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("http://localhost:8080")
+                .issuer("BIP AFPA")
                 .issuedAt(now)
                 .expiresAt(now.plus(1, ChronoUnit.HOURS))
                 .subject(authentication.getName())
                 .claim("role", roleString)
                 .claim("userId", userId)
-
                 .build();
 
         var encoderParameters = JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS512).build(), claims);
