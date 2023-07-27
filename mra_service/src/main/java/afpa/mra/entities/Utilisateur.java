@@ -42,8 +42,8 @@ public class Utilisateur {
     
     @Column(nullable = false)
     private String mdp;
-    
-    @Column
+
+    @Column(length = 2000)
     private String description;
     
     @Column(nullable = false)

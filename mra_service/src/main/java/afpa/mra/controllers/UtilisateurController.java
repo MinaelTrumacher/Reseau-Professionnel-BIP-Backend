@@ -60,6 +60,24 @@ public class UtilisateurController {
         return new ResponseEntity<>(optionalUtilisateur.get(), HttpStatus.OK);
     }
 
+    @GetMapping(path = "filtreBynameOrPrenom/{nomOrPrenom}")
+    public ResponseEntity<Object> getUtilisateurByFirstnameOrLastname(@PathVariable String nomOrPrenom) {
+        List<Utilisateur> utilisateurs = utilisateurRepository.findByNomContainingOrPrenomContaining(nomOrPrenom, nomOrPrenom);
+        if (utilisateurs.isEmpty()) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("response", "Aucun utilisateur trouvé !");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
+        List<Map<String, Object>> list = new ArrayList<>();
+        utilisateurs.forEach(utilisateur -> {
+            Map<String, Object> utilisateurDto = new HashMap<>();
+            utilisateurDto.put("id", utilisateur.getId());
+            utilisateurDto.put("nomDestination", utilisateur.getNom().concat(" ").concat(utilisateur.getPrenom()) );
+            list.add(utilisateurDto);
+        });
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
     @PutMapping
     public ResponseEntity<Object> updateUtilisateur(@RequestBody Utilisateur utilisateur) {
        // Optional<Geolocalisation> optionalGeolocalisation = geolocalisationRepository.findByLatitudeAndLongitude(utilisateur.getGeolocalisation().getLatitude(), utilisateur.getGeolocalisation().getLongitude());
