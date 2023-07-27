@@ -32,9 +32,9 @@ public class ContactController {
         mailMessage.setText(message);
         try {
             mailSender.send(mailMessage);
-            return ResponseEntity.ok("Mail sent successfully");
+            return ResponseEntity.ok("{\"message\": \"Mail sent successfully\"}");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"Error sending email\"}");
         }
     }
 
