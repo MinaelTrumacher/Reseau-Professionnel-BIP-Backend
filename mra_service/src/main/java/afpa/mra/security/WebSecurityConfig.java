@@ -39,7 +39,7 @@ public class WebSecurityConfig {
     private UtilisateurDetailService utilisateurDetailService;
 
     @Bean
-    public CustomAuthenticationProvider customAuthenticationProvider() {
+    CustomAuthenticationProvider customAuthenticationProvider() {
         return new CustomAuthenticationProvider();
     }
 
@@ -56,12 +56,8 @@ public class WebSecurityConfig {
                             "/api/authentification/register",
                             "/api/authentification/validation",
                             "/api/reset/**",
-                            "/api/utilisateur",
-                            // "/api/publications/**",
                             "/api/geolocalisations/**",
                             "/api/contact"
-                            // "/**"
-                            // Question : Est-il pertinent de laisser le "/api/publications" dans la liste des accès ?
                     ).permitAll();
                     auth.anyRequest().authenticated();
                 })
@@ -74,9 +70,6 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .build();
     }
-
-
-
 
     @Bean
     JwtEncoder jwtEncoder() {
