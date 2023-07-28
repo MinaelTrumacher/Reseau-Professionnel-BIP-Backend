@@ -1,18 +1,16 @@
 package afpa.mra.services;
 
+import afpa.mra.entities.RazMdp;
+import afpa.mra.entities.Utilisateur;
+import afpa.mra.repositories.RazMdpRepository;
+import afpa.mra.repositories.UtilisateurRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import afpa.mra.entities.RazMdp;
-import afpa.mra.entities.Utilisateur;
-import afpa.mra.entities.VerificationToken;
-import afpa.mra.repositories.RazMdpRepository;
-import afpa.mra.repositories.UtilisateurRepository;
 
 @Service
 public class PasswordService {
@@ -37,7 +35,7 @@ public class PasswordService {
     public String isCodeValid(Integer Code, String email) {
         Optional<Utilisateur> utilisateur = utilisateurRepository.findByEmail(email);
         if(!utilisateur.isPresent()){
-           return "Utilisateur non trouvé";
+            return "Utilisateur non trouvé";
         }
         Optional<RazMdp> resetPassword = resetPasswordRepository.findByCodeAndUtilisateur(Code, utilisateur.get());
         if(!resetPassword.isPresent()){
@@ -50,5 +48,4 @@ public class PasswordService {
         }
         return "Code OK";
     }
-    
 }

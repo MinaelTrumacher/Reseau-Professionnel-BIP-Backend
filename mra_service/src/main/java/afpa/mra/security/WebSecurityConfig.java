@@ -1,14 +1,11 @@
 package afpa.mra.security;
 
-import java.util.Arrays;
-
-import javax.crypto.spec.SecretKeySpec;
-
+import afpa.mra.services.UtilisateurDetailService;
+import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,13 +21,11 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
-
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.nimbusds.jose.jwk.source.ImmutableSecret;
-
-import afpa.mra.services.UtilisateurDetailService;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -58,13 +53,15 @@ public class WebSecurityConfig {
         return http
                 .authorizeHttpRequests( auth -> {
                     auth.requestMatchers(
-                    "/api/authentification/register",
-                    "/api/authentification/validation",
-                    "/api/reset/**",
-                    "/api/utilisateur",
-                    "/api/publication/**",
-                    "/api/geolocalisations/**",
-                    "/api/contact"
+                            "/api/authentification/register",
+                            "/api/authentification/validation",
+                            "/api/reset/**",
+                            "/api/utilisateur",
+                            // "/api/publications/**",
+                            "/api/geolocalisations/**",
+                            "/api/contact"
+                            // "/**"
+                            // Question : Est-il pertinent de laisser le "/api/publications" dans la liste des accès ?
                     ).permitAll();
                     auth.anyRequest().authenticated();
                 })
@@ -103,7 +100,4 @@ public class WebSecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
-
-    
 }

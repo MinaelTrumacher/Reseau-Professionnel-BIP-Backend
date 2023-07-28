@@ -10,7 +10,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-
 import java.util.Date;
 import java.util.List;
 
@@ -21,31 +20,31 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Utilisateur {
-	
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
-    
+
     @Column(nullable = false)
     private String nom;
-    
+
     @Column(nullable = false)
     private String prenom;
-    
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
-    
+
     @Column(nullable = false)
     private String email;
-    
+
     @Column(nullable = false)
     private String mdp;
 
-    @Column(length = 2000)
+    @Column
     private String description;
-    
+
     @Column(nullable = false)
     private String etatInscription;
 

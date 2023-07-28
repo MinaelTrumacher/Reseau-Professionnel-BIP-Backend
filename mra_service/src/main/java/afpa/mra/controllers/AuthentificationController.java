@@ -1,27 +1,5 @@
 package afpa.mra.controllers;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
-
 import afpa.mra.entities.Geolocalisation;
 import afpa.mra.entities.Utilisateur;
 import afpa.mra.entities.VerificationToken;
@@ -30,9 +8,20 @@ import afpa.mra.repositories.UtilisateurRepository;
 import afpa.mra.security.DecryptService;
 import afpa.mra.security.TokenService;
 import afpa.mra.services.VerificationTokenService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.*;
 
 @RestController
-@RequestMapping("/api/authentification")
+@RequestMapping("api/authentification")
 public class AuthentificationController {
 
     @Autowired
@@ -58,11 +47,11 @@ public class AuthentificationController {
         if (checkUtilisateur.isPresent()) {
             Utilisateur utilisateur = checkUtilisateur.get();
             String etat = utilisateur.getEtatInscription();
-            if ("autorisé".equals(etat)) { 
+            if ("autorisé".equals(etat)) {
                 String token = tokenService.generateToken(authentication);
                 Map<String, Object> responseBody = new HashMap<>();
                 responseBody.put("token", token);
-                responseBody.put("userId", utilisateur.getId());                
+                responseBody.put("userId", utilisateur.getId());
                 return ResponseEntity.ok(responseBody);
             } else {
                 String errorMessage = "Échec de la connexion : utilisateur non vérifié.";
@@ -94,7 +83,7 @@ public class AuthentificationController {
         Utilisateur savedUser = utilisateurRepository.save(user);
         String validationToken = UUID.randomUUID().toString();
         verificationTokenService.saveVerificationToken(savedUser, validationToken);
-        sendValidationEmail(savedUser.getEmail(), validationToken); 
+        sendValidationEmail(savedUser.getEmail(), validationToken);
         Map<String, Object> customResponse = new HashMap<>();
         customResponse.put("message", "Utilisateur enregistré");
         customResponse.put("status", 200);
@@ -141,13 +130,11 @@ public class AuthentificationController {
         Date expireDate = verificationToken.getExpireDate();
         Date currentDate = new Date();
         return expireDate != null && expireDate.before(currentDate);
-    
-
     }
-    
+
     @GetMapping("/test")
     public String test(){
         return "C'est un test";
-    } 
+    }
 
 }

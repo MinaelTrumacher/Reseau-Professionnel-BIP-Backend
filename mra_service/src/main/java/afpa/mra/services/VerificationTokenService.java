@@ -1,15 +1,14 @@
 package afpa.mra.services;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import afpa.mra.entities.Utilisateur;
 import afpa.mra.entities.VerificationToken;
 import afpa.mra.repositories.VerificationTokenRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 @Service
 public class VerificationTokenService {
@@ -34,5 +33,4 @@ public class VerificationTokenService {
         verificationToken.setExpireDate(Date.from(expireDateTime));
         verificationTokenRepository.save(verificationToken);
     }
-    
 }

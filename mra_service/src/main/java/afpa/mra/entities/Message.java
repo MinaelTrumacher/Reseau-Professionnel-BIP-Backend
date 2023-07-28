@@ -12,15 +12,15 @@ import java.util.Date;
 @Table(name = "messages")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Message {
-	
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
-    
+
     @Column(nullable = false)
     private String contenu;
-    
+
     @Column(nullable = false)
     private Boolean vu;
 
@@ -29,10 +29,10 @@ public class Message {
 
     @ManyToOne
     private Utilisateur expediteur;
-    
+
     @ManyToOne
     private Utilisateur destinataire;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

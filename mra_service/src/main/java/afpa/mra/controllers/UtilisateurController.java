@@ -80,7 +80,7 @@ public class UtilisateurController {
 
     @PutMapping
     public ResponseEntity<Object> updateUtilisateur(@RequestBody Utilisateur utilisateur) {
-       // Optional<Geolocalisation> optionalGeolocalisation = geolocalisationRepository.findByLatitudeAndLongitude(utilisateur.getGeolocalisation().getLatitude(), utilisateur.getGeolocalisation().getLongitude());
+        // Optional<Geolocalisation> optionalGeolocalisation = geolocalisationRepository.findByLatitudeAndLongitude(utilisateur.getGeolocalisation().getLatitude(), utilisateur.getGeolocalisation().getLongitude());
         Optional<Geolocalisation> optionalGeolocalisation = geolocalisationRepository.findById(utilisateur.getGeolocalisation().getId());
 
         Utilisateur utilisateur1;

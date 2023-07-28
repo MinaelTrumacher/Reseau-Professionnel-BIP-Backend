@@ -6,9 +6,6 @@ import afpa.mra.entities.Message;
 import afpa.mra.entities.MessageDto;
 import afpa.mra.repositories.MessageRepository;
 import afpa.mra.repositories.UtilisateurRepository;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
-import afpa.mra.entities.Utilisateur;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -91,17 +88,8 @@ public class MessageController {
         Optional<Message> messageOptional = messageRepository.findById(messageDto.getId());
 
         if (messageOptional.isPresent()) {
-
-//            if (messageOptional.get().getVu()) {
-//
-//                Map<String, Object> body = new HashMap<>();
-//                body.put("erreur", "le message à était déjà lu par le destinataire");
-//                return new ResponseEntity<>(body, HttpStatus.CONFLICT);
-//            } else {
-
             messageRepository.deleteById(messageDto.getId());
             return new ResponseEntity<>(HttpStatus.OK);
-//            }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

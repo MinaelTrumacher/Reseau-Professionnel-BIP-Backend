@@ -10,7 +10,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.util.Date;
 import java.util.Optional;
 
-
 @AllArgsConstructor
 @Data
 public class MessageDto {

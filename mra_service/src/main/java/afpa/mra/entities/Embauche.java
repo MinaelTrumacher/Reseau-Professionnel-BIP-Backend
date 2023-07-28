@@ -30,5 +30,4 @@ public class Embauche {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Entreprise entreprise;
-
 }

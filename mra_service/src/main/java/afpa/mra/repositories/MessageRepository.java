@@ -20,16 +20,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * @param userId id de l'utilisateur
      * @return List<Message> liste des derniers messages échangés entre l'utilisateur et autres utilisateurs
      */
-//    @Query("SELECT m FROM Message m " +
-//            "WHERE (m.expediteur.id = :userId OR m.destinataire.id = :userId) " +
-//            "AND m.dateEnvoi = (" +
-//            "                   SELECT MAX(mm.dateEnvoi) " +
-//            "                   FROM Message mm " +
-//            "                   WHERE (mm.expediteur.id = :userId AND mm.destinataire.id = m.destinataire.id) " +
-//            "                   OR (mm.expediteur.id = m.expediteur.id AND mm.destinataire.id = :userId)" +
-//            "                   ) " +
-//            "ORDER BY m.dateEnvoi DESC")
-//    List<Message> findLastMessagesWithUser(@Param("userId") Long userId);
 
     @Query("SELECT MAX(m.dateEnvoi) AS maxDateEnvoi, m.contenu, m.id, m.vu, m.destinataire.id, m.expediteur.id, m.supprimerParUserId " +
 

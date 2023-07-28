@@ -67,13 +67,6 @@ public class PublicationService {
                 existingPublication.setGeolocalisation(optionalGeolocalisation.get());
             }
 
-         /*   Optional<Utilisateur> optionalUtilisateur = utilisateurRepository.findById(publication.getUtilisateur().getId());
-            if (optionalUtilisateur.isEmpty()) {
-                Utilisateur utilisateur = utilisateurRepository.save(publication.getUtilisateur());
-                existingPublication.setUtilisateur(utilisateur);
-            } else {
-                existingPublication.setUtilisateur(optionalUtilisateur.get());
-            }*/
         }
         Publication newPublication = publicationRepository.save(existingPublication);
         return new ResponseEntity<>(newPublication, HttpStatus.OK).getBody();

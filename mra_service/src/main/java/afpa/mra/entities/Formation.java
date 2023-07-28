@@ -4,13 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
-
 @Data
 @Entity
 @Table(name = "formations")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Formation {
-	
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
@@ -19,7 +18,7 @@ public class Formation {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Titre titre;
-    
+
     @Column(nullable = false)
     private String codeRncp;
 }

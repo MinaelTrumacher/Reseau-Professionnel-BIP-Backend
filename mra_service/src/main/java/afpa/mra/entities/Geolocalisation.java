@@ -20,10 +20,8 @@ public class Geolocalisation {
     @Column(nullable = false)
     private String region;
     
-
     private String latitude;
     
-
     private String longitude;
 
     @Column(nullable = false)

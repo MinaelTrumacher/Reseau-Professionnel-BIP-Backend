@@ -14,16 +14,8 @@ public class UtilisateurDetailService implements UserDetailsService {
     private final UtilisateurRepository utilisateurRepository;
 
     public UtilisateurDetailService(UtilisateurRepository utilisateurRepository) {
-           this.utilisateurRepository = utilisateurRepository;
+        this.utilisateurRepository = utilisateurRepository;
     }
-
-    // @Override
-    // public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    //     return utilisateurRepository
-    //             .findByEmail(username)
-    //             .map(UtilisateurDetail::new)
-    //             .orElseThrow(() -> new UsernameNotFoundException(username, null));
-    // }
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -32,7 +24,4 @@ public class UtilisateurDetailService implements UserDetailsService {
                 .map(UtilisateurDetail::new)
                 .orElse(null);
     }
-
-
-    
 }

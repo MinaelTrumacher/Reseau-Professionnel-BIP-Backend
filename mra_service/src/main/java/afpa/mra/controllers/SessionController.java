@@ -1,7 +1,6 @@
 package afpa.mra.controllers;
 
 import afpa.mra.entities.Formation;
-import afpa.mra.entities.Publication;
 import afpa.mra.entities.Session;
 import afpa.mra.repositories.FormationRepository;
 import afpa.mra.repositories.SessionRepository;
@@ -17,7 +16,7 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/sessions")
 public class SessionController {
-	
+
 	@Autowired
 	private SessionRepository sessionRepository ;
 
@@ -37,32 +36,32 @@ public class SessionController {
 		Optional<Session> optionalSession = sessionRepository.findById(id);
 		return optionalSession.orElse(null);
 	}
-	
-    @GetMapping
-    public List<Session> getAllSession() {
+
+	@GetMapping
+	public List<Session> getAllSession() {
 		List<Session> sessionList = sessionRepository.findAll();
 		return sessionList;
-    }
-	
+	}
+
 	@PutMapping
 	public ResponseEntity<Object> updateSession(@RequestBody Session session) {
 		Optional<Formation> optionalFormation = formationRepository.findById(session.getFormation().getId());
-		 Session session1;
-		 if (optionalFormation.isEmpty()) {
-			 Formation formation = formationRepository.save(session.getFormation());
-			 session.setFormation(formation);
-		 } else {
-			 session.setFormation(optionalFormation.get());
-		 }
-		 session1 = sessionRepository.save(session);
+		Session session1;
+		if (optionalFormation.isEmpty()) {
+			Formation formation = formationRepository.save(session.getFormation());
+			session.setFormation(formation);
+		} else {
+			session.setFormation(optionalFormation.get());
+		}
+		session1 = sessionRepository.save(session);
 		return new ResponseEntity<>(session1, HttpStatus.OK);
 	}
-	
-    @DeleteMapping(path = "{id}")
-    public String deleteSession(@PathVariable Long id) {
-         sessionRepository.deleteById(id);
-         return "Session Supprimée";
-    }
+
+	@DeleteMapping(path = "{id}")
+	public String deleteSession(@PathVariable Long id) {
+		sessionRepository.deleteById(id);
+		return "Session Supprimée";
+	}
 
 
 }

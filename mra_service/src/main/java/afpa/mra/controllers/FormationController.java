@@ -30,7 +30,7 @@ public class FormationController {
 
     @GetMapping
     public List<Formation> getAllFormation() {
-         List<Formation> formationList = formationRepository.findAll();
+        List<Formation> formationList = formationRepository.findAll();
         return formationList;
     }
 
@@ -38,12 +38,12 @@ public class FormationController {
     public ResponseEntity getFormation(@PathVariable Long id) {
         Optional<Formation> optionalFormation = formationRepository.findById(id);
 
-            if(optionalFormation.isEmpty()) {
-                Map<String, Object> body = new HashMap<>();
-                body.put("response", "Aucune formation trouvée !");
-                return new ResponseEntity<>(body,HttpStatus.NOT_FOUND);
-            }
-                return new ResponseEntity<>(optionalFormation.get(), HttpStatus.OK);
+        if(optionalFormation.isEmpty()) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("response", "Aucune formation trouvée !");
+            return new ResponseEntity<>(body,HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(optionalFormation.get(), HttpStatus.OK);
     }
 
     @PutMapping
@@ -55,7 +55,7 @@ public class FormationController {
 
     @DeleteMapping(path = "{id}")
     public ResponseEntity<Object> deleteFormation(@PathVariable Long id) {
-       formationRepository.deleteById(id);
-       return new ResponseEntity<>(HttpStatus.OK);
+        formationRepository.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

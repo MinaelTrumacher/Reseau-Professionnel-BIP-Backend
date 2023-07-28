@@ -1,10 +1,8 @@
 package afpa.mra.controllers;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-
+import afpa.mra.entities.Utilisateur;
+import afpa.mra.repositories.UtilisateurRepository;
+import afpa.mra.services.PasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import afpa.mra.entities.Utilisateur;
-import afpa.mra.repositories.UtilisateurRepository;
-import afpa.mra.services.PasswordService;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/api/reset")
@@ -32,13 +31,13 @@ public class PasswordController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private PasswordService passwordService;
-    
+
 
     @PostMapping("/resetform")
     public ResponseEntity<Map<String, String>> sendResetEmail(@RequestParam("email") String email) {
         Optional<Utilisateur> utilisateur = utilisateurRepository.findByEmail(email);
         if (utilisateur.isPresent()) {
-        System.out.println(utilisateur.get().getNom());
+            System.out.println(utilisateur.get().getNom());
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(utilisateur.get().getEmail());
             message.setSubject("Réinitialisation du mot de passe");
@@ -55,7 +54,7 @@ public class PasswordController {
             response.put("error", "Utilisateur introuvable");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-   }
+    }
 
     @PostMapping("/change")
     public ResponseEntity<?> resetpassword(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("code") Integer code ){
@@ -73,8 +72,6 @@ public class PasswordController {
         Utilisateur user = utilisateur.get();
         user.setMdp(encryptedPassword);
         utilisateurRepository.save(user);
-        return ResponseEntity.status(HttpStatus.OK).body("Password reset completed with success");
+        return ResponseEntity.status(HttpStatus.OK).body("{\"message\": \"Password reset completed with success\"}");
     }
-
-
 }

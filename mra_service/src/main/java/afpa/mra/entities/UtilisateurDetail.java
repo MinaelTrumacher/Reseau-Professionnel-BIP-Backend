@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-
 public class UtilisateurDetail implements UserDetails{
 
     private final Utilisateur user;
@@ -24,7 +23,7 @@ public class UtilisateurDetail implements UserDetails{
     public Collection<? extends GrantedAuthority> getAuthorities() {
     String role = user.getRole().name();
         return Collections.singletonList(new SimpleGrantedAuthority(role));
-}
+    }
 
     @Override
     public String getPassword() {

@@ -12,8 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -43,9 +42,9 @@ public class PublicationController {
     }
 
     @GetMapping(path = "{id}")
-    public Publication getPublication(@PathVariable Long id) {
-        Optional<Publication> optionalPublication = publicationRepository.findById(id);
-        return optionalPublication.orElse(null);
+    public List <Publication> getPublication(@PathVariable Long id) {
+        List<Publication>  publicationList = publicationRepository.findByUtilisateur_Id(id);
+        return publicationList;
     }
 
     @GetMapping
@@ -89,5 +88,50 @@ public class PublicationController {
     public List<Publication> getPublicationsByUser(@PathVariable Long userId) {
         List<Publication> optionalPublication = publicationRepository.findByUtilisateur_Id(userId);
         return optionalPublication;
+    }
+
+    @PostMapping(path = "/search")
+    public List<Publication> getPublicationWithFiltre(@RequestBody Map<String, String[]> filterRequest) {
+        String[] types = filterRequest.get("types");
+        String[] keywords = filterRequest.get("keywords");
+
+        //Si aucun Filtre n'a était selectionné renvoyer simplement les publications avec le bon type
+        if(keywords.length == 0) {
+            return publicationRepository.findWithFiltre(types);
+        }
+
+        //Recherche de toutes les publications correspondant aux critères
+        List<Publication> publicationsCount = new ArrayList<>();
+        for (String keyword : keywords) {
+            publicationsCount.addAll(publicationRepository.findWithFiltre(keyword.toLowerCase(), types));
+        }
+
+        //Calcul du nombre de doublons pour un meilleur référencement
+        HashMap<Publication, Integer> publicationCount = new HashMap<>();
+        for (Publication publication : publicationsCount) {
+            if (publicationCount.containsKey(publication)) {
+                int count = publicationCount.get(publication);
+                publicationCount.put(publication, count + 1);
+            } else {
+                publicationCount.put(publication, 1);
+            }
+        }
+
+        //Tri par doublons
+        List<Map.Entry<Publication, Integer>> listMapped = new ArrayList<>(publicationCount.entrySet());
+        Collections.sort(listMapped, new Comparator<Map.Entry<Publication, Integer>>() {
+            @Override
+            public int compare(Map.Entry<Publication, Integer> entry1, Map.Entry<Publication, Integer> entry2) {
+                return entry2.getValue().compareTo(entry1.getValue());
+            }
+        });
+
+        //Map to List
+        List<Publication> publications = new ArrayList<>();
+        for (Map.Entry<Publication, Integer> entry : listMapped) {
+            Publication publication = entry.getKey();
+            publications.add(publication);
+        }
+        return publications;
     }
 }
