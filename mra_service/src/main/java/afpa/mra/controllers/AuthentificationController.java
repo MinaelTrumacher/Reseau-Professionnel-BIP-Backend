@@ -21,7 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.*;
 
 @RestController
-@RequestMapping("api/authentification")
+@RequestMapping("/api/authentification")
 public class AuthentificationController {
 
     @Autowired
