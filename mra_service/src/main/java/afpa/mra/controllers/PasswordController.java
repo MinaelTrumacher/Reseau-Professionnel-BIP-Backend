@@ -58,8 +58,8 @@ public class PasswordController {
 
     @PostMapping("/change")
     public ResponseEntity<?> resetpassword(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("code") Integer code ){
-        String ckeckParam = passwordService.isCodeValid(code, email);
-        switch (ckeckParam) {
+        String checkParam = passwordService.isCodeValid(code, email);
+        switch (checkParam) {
             case "Utilisateur non trouvé":
                 return ResponseEntity.badRequest().body("Utilisateur non trouvé");
             case "Code non trouvé":
