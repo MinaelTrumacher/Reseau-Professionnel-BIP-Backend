@@ -1,6 +1,7 @@
 package afpa.mra.controllers;
 
 import afpa.mra.entities.Utilisateur;
+import afpa.mra.entities.RezMdpObject;
 import afpa.mra.repositories.UtilisateurRepository;
 import afpa.mra.services.PasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,8 +59,8 @@ public class PasswordController {
     }
 
     @PostMapping("/change")
-    public ResponseEntity<?> resetpassword(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("code") Integer code ){
-        String checkParam = passwordService.isCodeValid(code, email);
+    public ResponseEntity<?> resetpassword(@RequestBody RezMdpObject rezMdpObject){
+        String checkParam = passwordService.isCodeValid(rezMdpObject.getCode(), rezMdpObject.getEmail());
         switch (checkParam) {
             case "Utilisateur non trouvé":
                 return ResponseEntity.badRequest().body("Utilisateur non trouvé");
@@ -67,8 +69,8 @@ public class PasswordController {
             case "Code expired":
                 return ResponseEntity.badRequest().body("Code expired");
         }
-        Optional<Utilisateur> utilisateur = utilisateurRepository.findByEmail(email);
-        String encryptedPassword = passwordEncoder.encode(password);
+        Optional<Utilisateur> utilisateur = utilisateurRepository.findByEmail(rezMdpObject.getEmail());
+        String encryptedPassword = passwordEncoder.encode(rezMdpObject.getPassword());
         Utilisateur user = utilisateur.get();
         user.setMdp(encryptedPassword);
         utilisateurRepository.save(user);

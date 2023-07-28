@@ -132,9 +132,4 @@ public class AuthentificationController {
         return expireDate != null && expireDate.before(currentDate);
     }
 
-    @GetMapping("/test")
-    public String test(){
-        return "C'est un test";
-    }
-
 }
