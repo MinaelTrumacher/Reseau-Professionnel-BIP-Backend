@@ -94,16 +94,17 @@ public class PublicationController {
     public List<Publication> getPublicationWithFiltre(@RequestBody Map<String, String[]> filterRequest) {
         String[] types = filterRequest.get("types");
         String[] keywords = filterRequest.get("keywords");
-
+        String[] villes = filterRequest.get("ville");
+        
         //Si aucun Filtre n'a était selectionné renvoyer simplement les publications avec le bon type
         if(keywords.length == 0) {
-            return publicationRepository.findWithFiltre(types);
+            return publicationRepository.findWithFiltre(types,villes[0]);
         }
 
         //Recherche de toutes les publications correspondant aux critères
         List<Publication> publicationsCount = new ArrayList<>();
         for (String keyword : keywords) {
-            publicationsCount.addAll(publicationRepository.findWithFiltre(keyword.toLowerCase(), types));
+            publicationsCount.addAll(publicationRepository.findWithFiltre(keyword.toLowerCase(), types,villes[0]));
         }
 
         //Calcul du nombre de doublons pour un meilleur référencement

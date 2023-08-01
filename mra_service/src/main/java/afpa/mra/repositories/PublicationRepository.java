@@ -17,11 +17,13 @@ public interface PublicationRepository extends JpaRepository<Publication,Long> {
             + "FROM Publication p "
             + "WHERE (LOWER(p.title) LIKE %:keywords% "
             + "OR LOWER(p.contenu) LIKE %:keywords%) "
-            + "AND p.categorie IN :types")
-    List<Publication> findWithFiltre(String keywords, String[] types);
+            + "AND p.categorie IN :types "
+            + "AND p.geolocalisation.id = :idGeo")
+    List<Publication> findWithFiltre(String keywords, String[] types,String idGeo);
 
     @Query("SELECT DISTINCT p "
             + "FROM Publication p "
-            + "WHERE p.categorie IN :types")
-    List<Publication> findWithFiltre(String[] types);
+            + "WHERE p.categorie IN :types "
+            + "AND p.geolocalisation.id = :idGeo")
+    List<Publication> findWithFiltre(String[] types,String idGeo);
 }
