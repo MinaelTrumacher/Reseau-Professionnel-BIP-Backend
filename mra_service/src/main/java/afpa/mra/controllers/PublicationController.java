@@ -2,6 +2,7 @@ package afpa.mra.controllers;
 
 import afpa.mra.entities.Geolocalisation;
 import afpa.mra.entities.Publication;
+import afpa.mra.entities.TypePublication;
 import afpa.mra.entities.Utilisateur;
 import afpa.mra.repositories.GeolocalisationRepository;
 import afpa.mra.repositories.InteractionRepository;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.*;
 
 @RestController
@@ -91,21 +94,46 @@ public class PublicationController {
     }
 
     @PostMapping(path = "/search")
-    public List<Publication> getPublicationWithFiltre(@RequestBody Map<String, String[]> filterRequest) {
-        String[] types = filterRequest.get("types");
-        String[] keywords = filterRequest.get("keywords");
-        String[] villes = filterRequest.get("ville");
+    public List<Publication> getPublicationWithFiltre(@RequestBody Map<String, Object> filterRequest) {
+    	List<String> types = (ArrayList<String>) filterRequest.get("types");
+    	List<String> keywords = (ArrayList<String>) filterRequest.get("keywords");
+    	List<Object> villes = (ArrayList<Object>) filterRequest.get("villes");
+
+        // Permet de gerer manuellement le type des id de villes
+        ArrayList<Long> parsedVilles = new ArrayList<>();
+        for (Object ville : villes) {
+            if (ville instanceof Integer) {
+                parsedVilles.add(((Integer) ville).longValue());
+            } else if (ville instanceof Long) {
+                parsedVilles.add((Long) ville);
+            } else if (ville instanceof String) {
+                try {
+                    parsedVilles.add(Long.parseLong((String) ville));
+                } catch (NumberFormatException e) {
+                	System.out.println(e);
+                }
+            }
+        }
+        
+        // Permet de gerer manuellement le type des publications
+        List<TypePublication> typePublications = types.stream()
+                .map(TypePublication::valueOf)
+                .collect(Collectors.toList());
         
         //Si aucun Filtre n'a était selectionné renvoyer simplement les publications avec le bon type
-        if(keywords.length == 0) {
-            return publicationRepository.findWithFiltre(types,villes[0]);
+        if (keywords.size() == 0) {
+            return villes.size()  == 0
+                    ? publicationRepository.findWithFiltre(typePublications)
+                    : publicationRepository.findWithFiltre(typePublications, parsedVilles);
         }
 
         //Recherche de toutes les publications correspondant aux critères
-        List<Publication> publicationsCount = new ArrayList<>();
-        for (String keyword : keywords) {
-            publicationsCount.addAll(publicationRepository.findWithFiltre(keyword.toLowerCase(), types,villes[0]));
-        }
+        List<Publication> publicationsCount = keywords.stream()
+                .map(keyword -> (villes.size() == 0)
+                        ? publicationRepository.findWithFiltre(keyword.toLowerCase(), typePublications)
+                        : publicationRepository.findWithFiltre(keyword.toLowerCase(), typePublications, parsedVilles))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
 
         //Calcul du nombre de doublons pour un meilleur référencement
         HashMap<Publication, Integer> publicationCount = new HashMap<>();
