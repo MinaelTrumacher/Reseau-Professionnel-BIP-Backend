@@ -76,4 +76,36 @@ public class PasswordController {
         utilisateurRepository.save(user);
         return ResponseEntity.status(HttpStatus.OK).body("{\"message\": \"Password reset completed with success\"}");
     }
+
+    @PutMapping("/updatePwd/{userId}")
+    public ResponseEntity<?> updatePassword(@PathVariable Long userId, @RequestBody PasswordUpdate passwordUpdate) {
+
+        Optional<Utilisateur> optionalUtilisateur = utilisateurRepository.findById(userId);
+        System.out.println(passwordUpdate.getAncienMdp());
+
+        if (optionalUtilisateur.isPresent()) {
+            Utilisateur utilisateur = optionalUtilisateur.get();
+            String ancienMdpDecrypt = this.decryptService.decrypt(passwordUpdate.getAncienMdp());
+            String nouveauMdpDecrypt = this.decryptService.decrypt(passwordUpdate.getNouveauMdp());
+            String mdpInBdd = utilisateur.getMdp();
+            System.out.println("ancienMdpDecrypt =>" + ancienMdpDecrypt);
+            System.out.println("nouveauMdpDecrypt =>" + nouveauMdpDecrypt);
+            System.out.println("mdpInBdd =>" + mdpInBdd);
+
+            if (this.passwordEncoder.matches(ancienMdpDecrypt, mdpInBdd)) {
+                String nouveauMdpRecrypt = passwordEncoder.encode(nouveauMdpDecrypt);
+                utilisateur.setMdp(nouveauMdpRecrypt);
+                System.out.println("nouveauMdpRecrypt =>" + nouveauMdpRecrypt);
+
+                utilisateurRepository.save(utilisateur);
+                return ResponseEntity.ok("Mot de passe mis à jour avec succès!");
+            }
+            else {
+                return ResponseEntity.badRequest().body("Ancien mot de passe incorrect!");
+            }
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
