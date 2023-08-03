@@ -35,4 +35,5 @@ public class Interaction {
     @JsonBackReference
     @JoinColumn(nullable=false, name = "publication_id")
     private Publication publication;
+   
 }

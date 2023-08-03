@@ -24,9 +24,10 @@ public class Publication {
     private String title;
     
     @Column(nullable = false)
-    private String categorie;
+    @Enumerated(EnumType.STRING)
+    private TypePublication categorie;
     
-    @Column(nullable = false)
+    @Column(nullable = false,length=2048)
     private String contenu;
     
     @Temporal(TemporalType.TIMESTAMP)
