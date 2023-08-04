@@ -16,8 +16,7 @@ public class Formation {
     private Long id;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Titre titre;
+    private String titre;
 
     @Column(nullable = false)
     private String codeRncp;

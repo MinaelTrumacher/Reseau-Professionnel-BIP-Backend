@@ -1,8 +1,10 @@
 package afpa.mra.controllers;
 
 import afpa.mra.entities.Utilisateur;
+import afpa.mra.entities.PasswordUpdate;
 import afpa.mra.entities.RezMdpObject;
 import afpa.mra.repositories.UtilisateurRepository;
+import afpa.mra.security.DecryptService;
 import afpa.mra.services.PasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +37,8 @@ public class PasswordController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private PasswordService passwordService;
+    @Autowired
+    private DecryptService decryptService;
 
 
     @PostMapping("/resetform")
