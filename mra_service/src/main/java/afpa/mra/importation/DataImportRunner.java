@@ -55,5 +55,9 @@ public class DataImportRunner implements CommandLineRunner {
         }
 
         System.out.println("Importation réussite!");
+        
+        //Affectation des clés étrangère
+        jdbcTemplate.update("UPDATE utilisateurs SET geolocalisation_id=25336");
+        jdbcTemplate.update("UPDATE publications SET geolocalisation_id=25336");
     }
 }
