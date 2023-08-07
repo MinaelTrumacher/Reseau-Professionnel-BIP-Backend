@@ -16,6 +16,7 @@ public interface PublicationRepository extends JpaRepository<Publication,Long> {
 	
     List<Publication> findByUtilisateur_Id(Long userId);
     
+    /* FILTRE */
     @Query("SELECT DISTINCT p "
             + "FROM Publication p "
             + "WHERE (LOWER(p.title) LIKE %:keywords% "
@@ -41,4 +42,13 @@ public interface PublicationRepository extends JpaRepository<Publication,Long> {
             + "WHERE p.categorie IN :types "
             + "AND p.geolocalisation.id IN :villes")
 	List<Publication> findWithFiltre(List<TypePublication> types, List<Long> villes);
+    
+    /* GET PUBLICATION AND INTERACTION BY USER */
+    
+    @Query("SELECT DISTINCT p "
+	       + "FROM Publication p "
+	       + "LEFT JOIN FETCH p.interactions i "
+	       + "WHERE i.utilisateur.id = :userId "
+	       + "ORDER BY p.dateCreation")
+	List<Publication> getPublicationWithInteractionByUser(Long userId);
 }

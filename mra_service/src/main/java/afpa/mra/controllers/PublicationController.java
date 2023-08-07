@@ -55,6 +55,12 @@ public class PublicationController {
         List<Publication> publicationList = publicationRepository.findAll();
         return publicationList;
     }
+    
+    @GetMapping(path = "/interactions/{id}")
+    public List<Publication> getAllPublicationWithInteractionByUser(@PathVariable Long id) {
+        List<Publication> publicationList = publicationRepository.getPublicationWithInteractionByUser(id);
+        return publicationList;
+    }
 
     @PutMapping
     public Publication updatePublication(@PathVariable Long id, @RequestBody Publication publication) {
