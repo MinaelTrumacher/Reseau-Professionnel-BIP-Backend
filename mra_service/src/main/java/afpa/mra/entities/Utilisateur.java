@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
@@ -67,11 +68,31 @@ public class Utilisateur {
     @UpdateTimestamp
     private Date dateModification;
 
-    @OneToMany(mappedBy = "utilisateur")
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<Embauche> embauches;
 
-    @OneToMany(mappedBy = "utilisateur")
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<Stage> stages;
+    
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Interaction> interactions;
+    
+    @OneToMany(mappedBy = "expediteur", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Message> messagesExpediteur;
+    
+    @OneToMany(mappedBy = "destinataire", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Message> messagesDestinataire;
+    
+    @OneToMany(mappedBy = "utilisateur")
+    @JsonIgnore
+    private List<Publication> publications;
+    
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Suivi> suivi;
 }
