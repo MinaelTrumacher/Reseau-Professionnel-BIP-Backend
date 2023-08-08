@@ -5,7 +5,7 @@
 --Mot de passe : 123456aB/
 insert into Utilisateurs(nom,prenom,role,email,mdp,description,etat_inscription,url_photo,url_banniere,date_creation,date_modification) values ('Chnaif','Walid','JEDI','chnaifw@gmail.com','$2a$10$Fi75AyzoPZsj48bfr4tbger5IKWHYAaCohBvMnPdbBlclaMd9Qj3.','Beta Testeur','autorisé','https://media.discordapp.net/attachments/811032745379233812/1136221736870883328/7a2ecd93588bf3ce28cc696a928a3830.png','https://media.discordapp.net/attachments/811032745379233812/1136222097354534962/26ae1241ca65ba8e8ff4a4d442c92566.png','2023-07-31 11:08:36.427','2023-07-31 11:08:36.427');
 insert into Utilisateurs(nom,prenom,role,email,mdp,description,etat_inscription,url_photo,url_banniere,date_creation,date_modification) values ('Schiavon','Pierre','JEDI','pierre.schiavon@gmail.com','$2a$10$Fi75AyzoPZsj48bfr4tbger5IKWHYAaCohBvMnPdbBlclaMd9Qj3.','Beta Testeur','autorisé','https://pbs.twimg.com/profile_images/385921406/abitbol_400x400.jpg','https://img.lovepik.com/background/20211021/large/lovepik-blue-technology-banner-background-image_500362377.jpg','2023-07-31 11:08:36.427','2023-07-31 11:08:36.427');
-insert into Utilisateurs(nom,prenom,role,email,mdp,description,etat_inscription,url_photo,url_banniere,date_creation,date_modification) values ('Del bario','Patrice','JEDI','patrice.delbarrio@gmail.com','$2a$10$Fi75AyzoPZsj48bfr4tbger5IKWHYAaCohBvMnPdbBlclaMd9Qj3.','Beta Testeur','autorisé','https://pbs.twimg.com/profile_images/385921406/abitbol_400x400.jpg','https://img.lovepik.com/background/20211021/large/lovepik-blue-technology-banner-background-image_500362377.jpg','2023-07-31 11:08:36.427','2023-07-31 11:08:36.427');
+insert into Utilisateurs(nom,prenom,role,email,mdp,description,etat_inscription,url_photo,url_banniere,date_creation,date_modification) values ('Del barrio','Patrice','JEDI','patrice.delbarrio@gmail.com','$2a$10$Fi75AyzoPZsj48bfr4tbger5IKWHYAaCohBvMnPdbBlclaMd9Qj3.','Beta Testeur','autorisé','https://pbs.twimg.com/profile_images/385921406/abitbol_400x400.jpg','https://img.lovepik.com/background/20211021/large/lovepik-blue-technology-banner-background-image_500362377.jpg','2023-07-31 11:08:36.427','2023-07-31 11:08:36.427');
 insert into Utilisateurs(nom,prenom,role,email,mdp,description,etat_inscription,url_photo,url_banniere,date_creation,date_modification) values ('Truong','Minh','JEDI','truong.minhtuan.tlse@gmail.com','$2a$10$Fi75AyzoPZsj48bfr4tbger5IKWHYAaCohBvMnPdbBlclaMd9Qj3.','Beta Testeur','autorisé','https://pbs.twimg.com/profile_images/385921406/abitbol_400x400.jpg','https://img.lovepik.com/background/20211021/large/lovepik-blue-technology-banner-background-image_500362377.jpg','2023-07-31 11:08:36.427','2023-07-31 11:08:36.427');
 
 insert into Utilisateurs(nom,prenom,role,email,mdp,description,etat_inscription,url_photo,url_banniere,date_creation,date_modification) values ('Ghoufa','Karim','JEDI','ghoufaabdelkarim@gmail.com','$2a$10$Fi75AyzoPZsj48bfr4tbger5IKWHYAaCohBvMnPdbBlclaMd9Qj3.','Testé','autorisé','https://media.discordapp.net/attachments/811032745379233812/1136221736870883328/7a2ecd93588bf3ce28cc696a928a3830.png','https://media.discordapp.net/attachments/811032745379233812/1136222097354534962/26ae1241ca65ba8e8ff4a4d442c92566.png','2023-07-31 11:08:36.427','2023-07-31 11:08:36.427');
@@ -128,7 +128,6 @@ INSERT INTO sessions (nom_promo, centre, date_debut, date_fin, formation_id) VAL
 INSERT INTO sessions (nom_promo, centre, date_debut, date_fin, formation_id) VALUES ('AIS1', 'AFPA - Centre de Toulouse/ Balma', '2023-08-01', '2023-12-31', 8);
 INSERT INTO sessions (nom_promo, centre, date_debut, date_fin, formation_id) VALUES ('AIS2', 'AFPA - Centre de Toulouse/ Balma', '2024-01-01', '2024-06-30', 8);
 
-
 --SUIVI
 INSERT INTO suivis (utilisateur_id, session_id) VALUES (1, 7);
 INSERT INTO suivis (utilisateur_id, session_id) VALUES (2, 7);
@@ -146,7 +145,6 @@ INSERT INTO stages (type, date_debut, date_fin, utilisateur_id, formation_id, en
 INSERT INTO stages (type, date_debut, date_fin, utilisateur_id, formation_id, entreprise_id) VALUES ('ALTERNANCE', '2024-01-01', '2024-06-30', 4, 4, 3);
 INSERT INTO stages (type, date_debut, date_fin, utilisateur_id, formation_id, entreprise_id) VALUES ('PAE', '2023-08-01', '2023-12-31', 1, 4, 4);
 INSERT INTO stages (type, date_debut, date_fin, utilisateur_id, formation_id, entreprise_id) VALUES ('ALTERNANCE', '2024-01-01', '2024-06-30', 2, 4, 5);
-
 
 --EMBAUCHE
 INSERT INTO embauches (date_debut, utilisateur_id, entreprise_id) VALUES ('2023-07-01', 1, 1);

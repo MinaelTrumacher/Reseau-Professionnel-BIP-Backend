@@ -39,7 +39,7 @@ public class Publication {
     @UpdateTimestamp
     private Date dateModification;
 
-    @OneToMany(mappedBy = "publication")
+    @OneToMany(mappedBy = "publication",cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<Interaction> interactions;
 
