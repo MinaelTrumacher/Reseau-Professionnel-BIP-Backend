@@ -52,6 +52,7 @@ public class AuthentificationController {
                 Map<String, Object> responseBody = new HashMap<>();
                 responseBody.put("token", token);
                 responseBody.put("userId", utilisateur.getId());
+                responseBody.put("role", utilisateur.getRole());
                 return ResponseEntity.ok(responseBody);
             } else {
                 String errorMessage = "Échec de la connexion : utilisateur non vérifié.";
