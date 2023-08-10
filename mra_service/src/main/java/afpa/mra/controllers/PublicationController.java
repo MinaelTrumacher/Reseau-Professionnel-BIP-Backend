@@ -45,9 +45,15 @@ public class PublicationController {
     }
 
     @GetMapping(path = "{id}")
-    public List <Publication> getPublication(@PathVariable Long id) {
-        List<Publication>  publicationList = publicationRepository.findByUtilisateur_Id(id);
+    public Publication getPublication(@PathVariable Long id) {
+        Publication  publicationList = publicationRepository.getById(id);
         return publicationList;
+    }
+    
+    @GetMapping("/utilisateur/{userId}")
+    public List<Publication> getPublicationsByUser(@PathVariable Long userId) {
+        List<Publication> optionalPublication = publicationRepository.findByUtilisateur_IdOrderByDateCreationDesc(userId);
+        return optionalPublication;
     }
 
     @GetMapping
@@ -64,10 +70,11 @@ public class PublicationController {
     
     @GetMapping(path = "/favoris/{id}")
     public List<Publication> getAllFavoris(Long userId) {
+    	System.out.println("test");
         List<Publication> publicationList = publicationRepository.getPublicationWithFavoris(userId);
         return publicationList;
     }
-
+    
     @PutMapping
     public Publication updatePublication(@PathVariable Long id, @RequestBody Publication publication) {
         Optional<Publication> optionalPublication = publicationRepository.findById(publication.getId());
@@ -97,12 +104,6 @@ public class PublicationController {
             return "Publication Supprimée";
         }
         return "Suppression échouée";
-    }
-
-    @GetMapping("/utilisateur/{userId}")
-    public List<Publication> getPublicationsByUser(@PathVariable Long userId) {
-        List<Publication> optionalPublication = publicationRepository.findByUtilisateur_Id(userId);
-        return optionalPublication;
     }
 
     @PostMapping(path = "/search")
