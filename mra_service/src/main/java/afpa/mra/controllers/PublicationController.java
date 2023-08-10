@@ -164,7 +164,14 @@ public class PublicationController {
         Collections.sort(listMapped, new Comparator<Map.Entry<Publication, Integer>>() {
             @Override
             public int compare(Map.Entry<Publication, Integer> entry1, Map.Entry<Publication, Integer> entry2) {
-                return entry2.getValue().compareTo(entry1.getValue());
+                int compareByValue = entry2.getValue().compareTo(entry1.getValue());
+
+                if (compareByValue != 0) {
+                    return compareByValue; // Tri par doublons
+                } else {
+                    // Tri par date de création en ordre décroissant si les doublons sont les mêmes
+                    return entry2.getKey().getDateCreation().compareTo(entry1.getKey().getDateCreation());
+                }
             }
         });
 
