@@ -52,13 +52,19 @@ public class PublicationController {
 
     @GetMapping
     public List<Publication> getAllPublication() {
-        List<Publication> publicationList = publicationRepository.findAll();
+        List<Publication> publicationList = publicationRepository.findByOrderByDateCreationDesc();
         return publicationList;
     }
     
     @GetMapping(path = "/interactions/{id}")
     public List<Publication> getAllPublicationWithInteractionByUser(@PathVariable Long id) {
         List<Publication> publicationList = publicationRepository.getPublicationWithInteractionByUser(id);
+        return publicationList;
+    }
+    
+    @GetMapping(path = "/favoris/{id}")
+    public List<Publication> getAllFavoris(Long userId) {
+        List<Publication> publicationList = publicationRepository.getPublicationWithFavoris(userId);
         return publicationList;
     }
 

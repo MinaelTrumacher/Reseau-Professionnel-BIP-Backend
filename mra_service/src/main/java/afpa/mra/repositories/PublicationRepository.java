@@ -2,6 +2,7 @@ package afpa.mra.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import afpa.mra.entities.Publication;
@@ -15,6 +16,8 @@ import java.util.List;
 public interface PublicationRepository extends JpaRepository<Publication,Long> {
 	
     List<Publication> findByUtilisateur_Id(Long userId);
+    
+    List<Publication> findByOrderByDateCreationDesc();
     
     /* FILTRE */
     @Query("SELECT DISTINCT p "
@@ -43,12 +46,22 @@ public interface PublicationRepository extends JpaRepository<Publication,Long> {
             + "AND p.geolocalisation.id IN :villes")
 	List<Publication> findWithFiltre(List<TypePublication> types, List<Long> villes);
     
-    /* GET PUBLICATION AND INTERACTION BY USER */
+    /* GET PUBLICATION ET LES INTERACTION PAR UTILISATEUR */
     
     @Query("SELECT DISTINCT p "
 	       + "FROM Publication p "
 	       + "LEFT JOIN FETCH p.interactions i "
 	       + "WHERE i.utilisateur.id = :userId "
-	       + "ORDER BY p.dateCreation")
-	List<Publication> getPublicationWithInteractionByUser(Long userId);
+	       + "ORDER BY p.dateCreation ASC")
+	List<Publication> getPublicationWithInteractionByUser(@Param("userId") Long userId);
+    
+    /* GET PUBLICATION FAVORIS PAR UTILISATEUR */
+    
+    @Query("SELECT DISTINCT p "
+            + "FROM Interaction i "
+            + "INNER JOIN i.publication p "
+            + "INNER JOIN p.utilisateur u "
+            + "WHERE i.typeInteraction = 'favoris' "
+            + "ORDER BY p.dateCreation")
+    List<Publication> getPublicationWithFavoris(@Param("userId") Long userId);
 }
