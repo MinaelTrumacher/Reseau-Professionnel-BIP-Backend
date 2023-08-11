@@ -77,6 +77,10 @@ public class Utilisateur {
     private List<Stage> stages;
     
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.REMOVE)
+    @JsonManagedReference
+    private List<Suivi> suivis;
+    
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<Interaction> interactions;
     
@@ -92,7 +96,4 @@ public class Utilisateur {
     @JsonIgnore
     private List<Publication> publications;
     
-    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.REMOVE)
-    @JsonIgnore
-    private List<Suivi> suivi;
 }

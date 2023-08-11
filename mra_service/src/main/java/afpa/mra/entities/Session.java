@@ -1,5 +1,6 @@
 package afpa.mra.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -31,10 +32,10 @@ public class Session {
     @Column(nullable = false)
     private LocalDate dateFin;
 
-    @OneToMany(mappedBy = "session")
-    @JsonManagedReference
+    @OneToMany(mappedBy = "session", cascade = CascadeType.REMOVE)
+    @JsonIgnore
     private List<Suivi> suivis;
-
+    
     @ManyToOne
     private Formation formation;
 
