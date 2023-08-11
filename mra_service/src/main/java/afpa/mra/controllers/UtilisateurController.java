@@ -2,6 +2,7 @@ package afpa.mra.controllers;
 
 import afpa.mra.entities.Geolocalisation;
 import afpa.mra.entities.Message;
+import afpa.mra.entities.ModificationUtilisateurRequest;
 import afpa.mra.entities.Publication;
 import afpa.mra.entities.Utilisateur;
 import afpa.mra.repositories.EmbaucheRepository;
@@ -9,6 +10,7 @@ import afpa.mra.repositories.GeolocalisationRepository;
 import afpa.mra.repositories.StageRepository;
 import afpa.mra.repositories.UtilisateurRepository;
 import afpa.mra.repositories.VerificationTokenRepository;
+import jakarta.persistence.EntityNotFoundException;
 import afpa.mra.entities.VerificationToken;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,6 +116,42 @@ public class UtilisateurController {
         utilisateur = utilisateurRepository.save(utilisateur);
         return new ResponseEntity<>(utilisateur, HttpStatus.OK);
     }
+    
+    @PutMapping("/{id}/modifier-infos")
+    public ResponseEntity<Object> modifierInfosUtilisateur(
+            @PathVariable Long id,
+            @RequestBody ModificationUtilisateurRequest request) {
+    	System.out.println("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////");
+    	Optional<Utilisateur> optionalUtilisateur = utilisateurRepository.findById(id);
+
+        if (optionalUtilisateur.isEmpty()) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("response", "Utilisateur non trouvé !");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
+        Utilisateur utilisateur = optionalUtilisateur.get();
+        System.out.println(request.getNewUrlPhoto());
+
+        System.out.println(request.getNewUrlBanniere());
+
+        System.out.println(request.getNewDescription());
+
+        if (request.getNewUrlPhoto() != null) {
+            utilisateur.setUrlPhoto(request.getNewUrlPhoto());
+        }
+
+        if (request.getNewUrlBanniere() != null) {
+            utilisateur.setUrlBanniere(request.getNewUrlBanniere());
+        }
+
+        if (request.getNewDescription() != null) {
+            utilisateur.setDescription(request.getNewDescription());
+        }
+          
+        utilisateur = utilisateurRepository.save(utilisateur);
+        return new ResponseEntity<>(utilisateur, HttpStatus.OK);
+    }
+    
 
     @DeleteMapping(path = "{id}")
     public ResponseEntity<Object> deleteUtilisateur(@PathVariable Long id) {
